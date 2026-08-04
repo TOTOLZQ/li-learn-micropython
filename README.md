@@ -30,6 +30,9 @@
 
 ### 目录结构
 
+<details>
+<summary>点击展开 / Click to expand</summary>
+
 ```text
 Files
 ├── Btn           按键模块
@@ -41,7 +44,12 @@ Files
     └── Screen1.0
 ```
 
+</details>
+
 ### 功能模块
+
+<details>
+<summary>点击展开功能模块表格</summary>
 
 | 模块 | 版本 | 功能说明 | 版本文档 |
 | :--- | :--- | :--- | :--- |
@@ -49,6 +57,8 @@ Files
 | Btn | [Btn2.0](Files/Btn/Btn2.0/Btn2.0.py) | 双击继续交互，带弹跳动画效果 | [Ver.md](Files/Btn/Btn2.0/Ver.md) |
 | Keyboard | [Keyboard1.0](Files/Keyboard/Keyboard1.0/Keyboard1.0.py) | 仅支持输入 | [Ver.md](Files/Keyboard/Keyboard1.0/Ver.md) |
 | Screen | [Screen1.0](Files/Screen/Screen1.0/Screen1.0.py) | 屏幕彩虹色循环显示 | [Ver.md](Files/Screen/Screen1.0/Ver.md) |
+
+</details>
 
 ### 快速开始
 
@@ -76,6 +86,9 @@ Learn MicroPython step by step on the M5Stack Cardputer 1.1, practicing basic pe
 
 ### Directory Structure
 
+<details>
+<summary>Click to expand</summary>
+
 ```text
 Files
 ├── Btn           Button module
@@ -87,7 +100,12 @@ Files
     └── Screen1.0
 ```
 
+</details>
+
 ### Feature Modules
+
+<details>
+<summary>Click to expand the feature modules table</summary>
 
 | Module | Version | Features | Version Notes |
 | :--- | :--- | :--- | :--- |
@@ -95,6 +113,8 @@ Files
 | Btn | [Btn2.0](Files/Btn/Btn2.0/Btn2.0.py) | Double-click to continue with bounce animation | [Ver.md](Files/Btn/Btn2.0/Ver.md) |
 | Keyboard | [Keyboard1.0](Files/Keyboard/Keyboard1.0/Keyboard1.0.py) | Input only | [Ver.md](Files/Keyboard/Keyboard1.0/Ver.md) |
 | Screen | [Screen1.0](Files/Screen/Screen1.0/Screen1.0.py) | Screen cycles through rainbow colors | [Ver.md](Files/Screen/Screen1.0/Ver.md) |
+
+</details>
 
 ### Quick Start
 
