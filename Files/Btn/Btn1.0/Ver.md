@@ -2,6 +2,8 @@
 
 ![Version](https://img.shields.io/badge/version-V1.0-blue.svg) ![Module](https://img.shields.io/badge/module-Btn-2b5b84.svg)
 
+<img src="btn1.svg" width="640" alt="Btn1.0 banner">
+
 > 版本说明文档 / Version Notes
 
 ## 版本信息 / Version Info
