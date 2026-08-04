@@ -5,11 +5,15 @@
 ![Platform](https://img.shields.io/badge/platform-Cardputer%201.1-orange.svg)
 ![Status](https://img.shields.io/badge/status-learning-success.svg)
 
-<img src="docs/images/hero.jpg" width="640" alt="li-learn-micropython" />
+<!-- 纯 SVG 个性海报，无水印无外链 -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner.svg">
+  <img src="docs/images/banner.svg" width="720" alt="li-learn-micropython banner">
+</picture>
 
 # li-learn-micropython
 
-为 M5Stack Cardputer 1.1 准备的 MicroPython 学习项目 / A MicroPython learning project for Cardputer 1.1
+为 M5Stack Cardputer 1.1 准备的 MicroPython 学习项目 · A MicroPython learning project for Cardputer 1.1
 
 **[中文](#中文) · [English](#english)**
 
