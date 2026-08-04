@@ -1,6 +1,6 @@
 # Btn2.0
 
-![Version](https://img.shields.io/badge/version-V2.0-blue.svg) ![Module](https://img.shields.io/badge/module-Btn-2b5b84.svg) ![Created](https://img.shields.io/badge/created-2026-08-03-orange.svg)
+![Version](https://img.shields.io/badge/version-V2.0-blue.svg) ![Module](https://img.shields.io/badge/module-Btn-2b5b84.svg)
 
 > 版本说明文档 / Version Notes
 
