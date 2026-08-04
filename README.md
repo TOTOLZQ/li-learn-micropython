@@ -42,7 +42,8 @@ Files
 │   ├── Keyboard1.0
 │   └── Keyboard2.0
 └── Screen        屏幕模块
-    └── Screen1.0
+    ├── Screen1.0
+    └── Screen2.0
 ```
 
 </details>
@@ -59,6 +60,7 @@ Files
 | Keyboard | [Keyboard1.0](Files/Keyboard/Keyboard1.0/Keyboard1.0.py) | 仅支持输入 | [Ver.md](Files/Keyboard/Keyboard1.0/Ver.md) |
 | Keyboard | [Keyboard2.0](Files/Keyboard/Keyboard2.0/Keyboard2.0.py) | 键盘输入并实时统计按键次数 | [Ver.md](Files/Keyboard/Keyboard2.0/Ver.md) |
 | Screen | [Screen1.0](Files/Screen/Screen1.0/Screen1.0.py) | 屏幕彩虹色循环显示 | [Ver.md](Files/Screen/Screen1.0/Ver.md) |
+| Screen | [Screen2.0](Files/Screen/Screen2.0/Screen2.0.py) | 彩虹色循环，带 RGB 淡入淡出过渡动画 | [Ver.md](Files/Screen/Screen2.0/Ver.md) |
 
 </details>
 
@@ -100,7 +102,8 @@ Files
 │   ├── Keyboard1.0
 │   └── Keyboard2.0
 └── Screen        Screen module
-    └── Screen1.0
+    ├── Screen1.0
+    └── Screen2.0
 ```
 
 </details>
@@ -117,6 +120,7 @@ Files
 | Keyboard | [Keyboard1.0](Files/Keyboard/Keyboard1.0/Keyboard1.0.py) | Input only | [Ver.md](Files/Keyboard/Keyboard1.0/Ver.md) |
 | Keyboard | [Keyboard2.0](Files/Keyboard/Keyboard2.0/Keyboard2.0.py) | Keyboard input with real-time keypress counting | [Ver.md](Files/Keyboard/Keyboard2.0/Ver.md) |
 | Screen | [Screen1.0](Files/Screen/Screen1.0/Screen1.0.py) | Screen cycles through rainbow colors | [Ver.md](Files/Screen/Screen1.0/Ver.md) |
+| Screen | [Screen2.0](Files/Screen/Screen2.0/Screen2.0.py) | Rainbow cycle with RGB fade transition | [Ver.md](Files/Screen/Screen2.0/Ver.md) |
 
 </details>
 
