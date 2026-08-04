@@ -43,7 +43,8 @@ Files
 │   ├── Btn1.0
 │   └── Btn2.0
 ├── Keyboard      键盘模块
-│   └── Keyboard1.0
+│   ├── Keyboard1.0
+│   └── Keyboard2.0
 └── Screen        屏幕模块
     └── Screen1.0
 ```
@@ -60,6 +61,7 @@ Files
 | Btn | [Btn1.0](Files/Btn/Btn1.0/Btn1.0.py) | 按键 A 点击事件响应，点击后屏幕显示提示文字 | [Ver.md](Files/Btn/Btn1.0/Ver.md) |
 | Btn | [Btn2.0](Files/Btn/Btn2.0/Btn2.0.py) | 双击继续交互，带弹跳动画效果 | [Ver.md](Files/Btn/Btn2.0/Ver.md) |
 | Keyboard | [Keyboard1.0](Files/Keyboard/Keyboard1.0/Keyboard1.0.py) | 仅支持输入 | [Ver.md](Files/Keyboard/Keyboard1.0/Ver.md) |
+| Keyboard | [Keyboard2.0](Files/Keyboard/Keyboard2.0/Keyboard2.0.py) | 键盘输入并实时统计按键次数 | [Ver.md](Files/Keyboard/Keyboard2.0/Ver.md) |
 | Screen | [Screen1.0](Files/Screen/Screen1.0/Screen1.0.py) | 屏幕彩虹色循环显示 | [Ver.md](Files/Screen/Screen1.0/Ver.md) |
 
 </details>
@@ -99,7 +101,8 @@ Files
 │   ├── Btn1.0
 │   └── Btn2.0
 ├── Keyboard      Keyboard module
-│   └── Keyboard1.0
+│   ├── Keyboard1.0
+│   └── Keyboard2.0
 └── Screen        Screen module
     └── Screen1.0
 ```
@@ -116,6 +119,7 @@ Files
 | Btn | [Btn1.0](Files/Btn/Btn1.0/Btn1.0.py) | Button A click response; shows hint text on click | [Ver.md](Files/Btn/Btn1.0/Ver.md) |
 | Btn | [Btn2.0](Files/Btn/Btn2.0/Btn2.0.py) | Double-click to continue with bounce animation | [Ver.md](Files/Btn/Btn2.0/Ver.md) |
 | Keyboard | [Keyboard1.0](Files/Keyboard/Keyboard1.0/Keyboard1.0.py) | Input only | [Ver.md](Files/Keyboard/Keyboard1.0/Ver.md) |
+| Keyboard | [Keyboard2.0](Files/Keyboard/Keyboard2.0/Keyboard2.0.py) | Keyboard input with real-time keypress counting | [Ver.md](Files/Keyboard/Keyboard2.0/Ver.md) |
 | Screen | [Screen1.0](Files/Screen/Screen1.0/Screen1.0.py) | Screen cycles through rainbow colors | [Ver.md](Files/Screen/Screen1.0/Ver.md) |
 
 </details>
