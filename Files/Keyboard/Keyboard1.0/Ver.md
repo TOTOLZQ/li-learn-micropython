@@ -1,6 +1,6 @@
 # Keyboard1.0
 
-![Version](https://img.shields.io/badge/version-V1.0-blue.svg) ![Module](https://img.shields.io/badge/module-Keyboard-2b5b84.svg) ![Created](https://img.shields.io/badge/created-2026-07-31-orange.svg)
+![Version](https://img.shields.io/badge/version-V1.0-blue.svg) ![Module](https://img.shields.io/badge/module-Keyboard-2b5b84.svg)
 
 > 版本说明文档 / Version Notes
 
