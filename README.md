@@ -5,11 +5,7 @@
 ![Platform](https://img.shields.io/badge/platform-Cardputer%201.1-orange.svg)
 ![Status](https://img.shields.io/badge/status-learning-success.svg)
 
-<!-- 纯 SVG 个性海报，无水印无外链 -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner.svg">
-  <img src="docs/images/banner.svg" width="720" alt="li-learn-micropython banner">
-</picture>
+<img src="docs/images/banner.png" width="720" alt="li-learn-micropython banner">
 
 # li-learn-micropython
 
