@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-V2.0-blue.svg) ![Module](https://img.shields.io/badge/module-Keyboard-2b5b84.svg)
 
-<img src="kb2.svg" width="640" alt="Keyboard2.0 banner">
+<img src="kb2.png" width="640" alt="Keyboard2.0 banner">
 
 > 版本说明文档 / Version Notes
 
