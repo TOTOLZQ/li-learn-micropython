@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-V1.0-blue.svg) ![Module](https://img.shields.io/badge/module-Screen-2b5b84.svg)
 
-<img src="screen1.svg" width="640" alt="Screen1.0 banner">
+<img src="screen1.png" width="640" alt="Screen1.0 banner">
 
 > 版本说明文档 / Version Notes
 
