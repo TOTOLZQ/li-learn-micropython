@@ -1,6 +1,6 @@
 # Screen2.0
 
-![Version](https://img.shields.io/badge/version-V2.0-blue.svg) ![Module](https://img.shields.io/badge/module-Screen-2b5b84.svg)
+![Version](https://img.shields.io/badge/version-V2.0-blue.svg) ![Module](https://img.shields.io/badge/module-Screen-teal.svg)
 
 <img src="screen2.png" width="640" alt="Screen2.0 banner">
 
