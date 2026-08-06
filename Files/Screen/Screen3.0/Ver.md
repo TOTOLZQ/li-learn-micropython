@@ -1,7 +1,7 @@
 # Screen3.0
 
 ![Version](https://img.shields.io/badge/version-V3.0-blue.svg)
-![Module](https://img.shields.io/badge-module-Screen-2b5b84.svg)
+![Module](https://img.shields.io/badge-module-Screen-teal.svg)
 
 <img src="screen3.png" width="240" alt="Screen3.0 preview">
 
