@@ -1,5 +1,7 @@
-![Version](https://img.shields.io/badge/version-2.1_Pro-blue.svg)
-![Module](https://img.shields.io/badge-module-Keyboard-teal.svg)
+# Keyboard2.1-Pro
+
+![Version](https://img.shields.io/badge/version-V2.1_Pro-blue.svg)
+![Module](https://img.shields.io/badge/module-Keyboard-teal.svg)
 
 <img src="kb21.png" width="480" alt="Keyboard2.1-Pro">
 
