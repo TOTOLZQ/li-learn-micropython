@@ -611,51 +611,27 @@ a {
     color: var(--accent);
 }
 
-.skill-item {
-    margin-bottom: 18px;
-}
-
-.skill-item:last-child {
-    margin-bottom: 0;
-}
-
-.skill-info {
+.skill-tags-list {
     display: flex;
-    justify-content: space-between;
-    font-size: 0.88rem;
-    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.skill-info span:first-child {
-    color: var(--text);
-    font-weight: 500;
-}
-
-.skill-pct {
-    color: var(--text-dim);
+.skill-tag {
     font-family: var(--font-mono);
-    font-size: 0.82rem;
-}
-
-.skill-bar {
-    height: 6px;
+    font-size: 0.85rem;
+    color: var(--text);
+    padding: 7px 14px;
     background: var(--bg);
-    border-radius: 3px;
-    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    transition: all var(--transition);
 }
 
-.skill-fill {
-    height: 100%;
-    width: var(--pct);
-    background: linear-gradient(90deg, var(--accent), var(--cyan));
-    border-radius: 3px;
-    transform-origin: left;
-    animation: skill-grow 1.5s ease-out forwards;
-}
-
-@keyframes skill-grow {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+.skill-tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
 }
 
 .project-filter {
