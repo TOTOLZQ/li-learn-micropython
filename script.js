@@ -1,7 +1,6 @@
 const i18n = {
     en: {
         'nav.about': 'About',
-        'nav.skills': 'Skills',
         'nav.projects': 'Projects',
         'nav.timeline': 'Timeline',
         'nav.contact': 'Contact',
@@ -19,10 +18,6 @@ const i18n = {
         'about.stat2': 'Modules',
         'about.stat3': 'Open Source',
         'about.stat4': 'Repositories',
-        'skills.title': 'Skills',
-        'skills.cat1': 'Languages',
-        'skills.cat2': 'Hardware & Tools',
-        'skills.cat3': 'Concepts',
         'projects.title': 'Projects',
         'projects.filterAll': 'All',
         'projects.filterEmbedded': 'Embedded',
@@ -50,7 +45,6 @@ const i18n = {
     },
     cn: {
         'nav.about': '关于',
-        'nav.skills': '技能',
         'nav.projects': '项目',
         'nav.timeline': '版本历程',
         'nav.contact': '联系',
@@ -68,10 +62,6 @@ const i18n = {
         'about.stat2': '功能模块',
         'about.stat3': '开源协议',
         'about.stat4': '仓库数量',
-        'skills.title': '技能',
-        'skills.cat1': '编程语言',
-        'skills.cat2': '硬件与工具',
-        'skills.cat3': '概念与方法',
         'projects.title': '项目',
         'projects.filterAll': '全部',
         'projects.filterEmbedded': '嵌入式',
@@ -99,7 +89,6 @@ const i18n = {
     },
     jp: {
         'nav.about': '自己紹介',
-        'nav.skills': 'スキル',
         'nav.projects': 'プロジェクト',
         'nav.timeline': 'バージョン',
         'nav.contact': '連絡',
@@ -117,10 +106,6 @@ const i18n = {
         'about.stat2': 'モジュール',
         'about.stat3': 'オープンソース',
         'about.stat4': 'リポジトリ',
-        'skills.title': 'スキル',
-        'skills.cat1': 'プログラミング',
-        'skills.cat2': 'ハードウェアとツール',
-        'skills.cat3': '概念と手法',
         'projects.title': 'プロジェクト',
         'projects.filterAll': 'すべて',
         'projects.filterEmbedded': '組み込み',
@@ -219,7 +204,7 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-document.querySelectorAll('.section-header, .about-text, .about-visual, .skill-category, .project-card, .timeline-item, .contact-card, .contact-intro, .project-filter').forEach(el => {
+document.querySelectorAll('.section-header, .about-text, .about-visual, .project-card, .timeline-item, .contact-card, .contact-intro, .project-filter').forEach(el => {
     el.classList.add('fade-in');
     observer.observe(el);
 });
