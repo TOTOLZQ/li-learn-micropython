@@ -162,7 +162,6 @@ function applyI18n(lang) {
 
 const navbar = document.getElementById('navbar');
 const langBtns = document.querySelectorAll('.lang-btn');
-const themeToggle = document.getElementById('themeToggle');
 const mobileMenu = document.getElementById('mobileMenu');
 const navLinks = document.getElementById('navLinks');
 
@@ -177,12 +176,6 @@ langBtns.forEach(btn => {
         currentLang = btn.getAttribute('data-lang');
         applyI18n(currentLang);
     });
-});
-
-themeToggle.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
 });
 
 mobileMenu.addEventListener('click', () => {
