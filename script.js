@@ -1351,5 +1351,17 @@ const heroObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 if (heroDesc) heroObserver.observe(heroDesc);
 
-renderNavAuth();
-applyI18n(currentLang);
+try {
+    renderNavAuth();
+    applyI18n(currentLang);
+} catch (e) {
+    window.__initErr = String(e) + ' | ' + (e && e.stack ? e.stack.slice(0, 500) : '');
+    setTimeout(() => {
+        try { renderNavAuth(); applyI18n(currentLang || 'en'); } catch (e2) {}
+    }, 0);
+}
+setTimeout(() => {
+    if (document.querySelector('[data-i18n="hero.status"]') && document.querySelector('[data-i18n="hero.status"]').textContent === 'hero.status') {
+        try { renderNavAuth(); applyI18n(currentLang || 'en'); } catch (e) {}
+    }
+}, 32);
