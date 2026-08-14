@@ -695,6 +695,23 @@ a {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn:hover::after {
+    left: 100%;
 }
 
 .btn-primary {
@@ -705,7 +722,7 @@ a {
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 36px var(--accent-glow-strong);
+    box-shadow: 0 10px 36px var(--accent-glow-strong), 0 0 0 4px var(--accent-glow);
 }
 
 .btn-ghost {
@@ -713,7 +730,9 @@ a {
     border-radius: var(--radius-sm);
     font-size: 0.95rem;
     font-weight: 600;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: var(--text);
     border: 1px solid var(--border);
     cursor: pointer;
@@ -727,6 +746,8 @@ a {
     border-color: var(--accent);
     color: var(--accent);
     transform: translateY(-2px);
+    background: var(--bg-card);
+    box-shadow: 0 6px 20px var(--accent-glow);
 }
 
 .hero-tech {
@@ -810,26 +831,34 @@ a {
 }
 
 .mouse {
-    width: 26px;
-    height: 42px;
-    border: 2px solid var(--text-dim);
+    width: 28px;
+    height: 46px;
+    border: 2px solid var(--accent);
     border-radius: 14px;
     display: flex;
     justify-content: center;
     padding-top: 8px;
+    box-shadow: 0 0 16px var(--accent-glow);
+    transition: all var(--transition);
+}
+
+.scroll-indicator:hover .mouse {
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+    transform: scale(1.05);
 }
 
 .wheel {
     width: 4px;
     height: 8px;
-    background: var(--text-dim);
+    background: linear-gradient(180deg, var(--accent), var(--cyan));
     border-radius: 2px;
     animation: scroll-down 2s ease-in-out infinite;
 }
 
 @keyframes scroll-down {
     0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(14px); opacity: 0; }
 }
 
 .about, .skills, .projects, .timeline, .contact {
@@ -840,27 +869,50 @@ a {
 .section-header {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
     margin-bottom: 64px;
 }
 
 .section-num {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--accent);
-    font-weight: 600;
+    font-weight: 700;
+    background: var(--accent-glow);
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-hover);
+    letter-spacing: 0.05em;
 }
 
 .section-title {
     font-size: clamp(1.8rem, 4vw, 2.6rem);
     font-weight: 700;
     letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text), var(--text-muted));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .section-line {
     flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, var(--border), transparent);
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent 60%);
+    border-radius: 2px;
+    position: relative;
+}
+
+.section-line::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 24px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 4px;
+    box-shadow: 0 0 8px var(--accent);
 }
 
 .about-grid {
@@ -1092,12 +1144,13 @@ a {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 32px;
-    transition: all var(--transition);
+    transition: transform var(--transition), box-shadow var(--transition);
     display: flex;
     flex-direction: column;
     gap: 18px;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
 .project-card::before {
@@ -1106,11 +1159,19 @@ a {
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--cyan));
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--cyan), var(--green));
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform var(--transition);
+    transition: transform 0.4s ease;
+}
+
+.project-card:hover {
+    box-shadow: 0 16px 48px rgba(124, 92, 252, 0.1), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.project-card:hover::before {
+    transform: scaleX(1);
 }
 
 .project-card:hover {
@@ -1227,10 +1288,10 @@ a {
     top: 6px;
     width: 16px;
     height: 16px;
-    background: var(--bg);
-    border: 3px solid var(--accent);
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
     border-radius: 50%;
-    box-shadow: 0 0 0 4px var(--accent-glow);
+    box-shadow: 0 0 0 4px var(--accent-glow), 0 0 12px var(--accent);
+    border: 2px solid #fff;
 }
 
 .timeline-content {
@@ -1239,12 +1300,31 @@ a {
     border-radius: var(--radius);
     padding: 24px 28px;
     transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-content::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--cyan));
+    border-radius: 3px;
+    transform: scaleY(0.5);
+    transform-origin: top;
+    transition: transform 0.4s ease;
 }
 
 .timeline-content:hover {
-    border-color: var(--border-hover);
-    transform: translateX(4px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    transform: translateX(6px);
+    box-shadow: 0 12px 36px rgba(124, 92, 252, 0.1);
+}
+
+.timeline-content:hover::before {
+    transform: scaleY(1);
 }
 
 .timeline-version {

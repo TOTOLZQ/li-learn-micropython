@@ -228,8 +228,8 @@ const eggCountEl = document.getElementById('eggCount');
 const mouseTrail = document.getElementById('mouseTrail');
 
 const foundEggs = new Set();
-const TOTAL_EGGS = 9;
-eggCountEl.nextElementSibling.textContent = '/9';
+const TOTAL_EGGS = 6;
+eggCountEl.nextElementSibling.textContent = '/6';
 
 function markEgg(id) {
     if (foundEggs.has(id)) return;
@@ -486,7 +486,6 @@ document.addEventListener('keydown', (e) => {
     typeBuffer.push(e.key.toLowerCase());
     if (typeBuffer.length > 3) typeBuffer.shift();
     if (typeBuffer.join('') === 'li') {
-        markEgg('type-li');
         launchConfetti(0.6);
         typeBuffer.length = 0;
     }
@@ -520,22 +519,6 @@ navLogo.addEventListener('click', (e) => {
         logoClicks = 0;
     }, 1200);
 });
-
-const heroTitle = document.querySelector('.hero-title');
-let titleClicks = 0;
-let titleTimer = null;
-if (heroTitle) {
-    heroTitle.addEventListener('click', () => {
-        titleClicks++;
-        clearTimeout(titleTimer);
-        titleTimer = setTimeout(() => titleClicks = 0, 1000);
-        if (titleClicks >= 3) {
-            launchConfetti(0.8);
-            markEgg('title3');
-            titleClicks = 0;
-        }
-    });
-}
 
 const backTopBtn = document.querySelector('.back-top');
 let pressTimer = null;
@@ -594,7 +577,6 @@ window.addEventListener('scroll', () => {
     if (dir === -1 && lastScrollDir !== -1) {
         scrollUpStreak++;
         if (scrollUpStreak >= 3) {
-            markEgg('scroll');
             launchConfetti(0.8);
             scrollUpStreak = 0;
         }
