@@ -1018,18 +1018,18 @@ a {
     color: var(--text-dim);
 }
 
-.powered-by {
+.thanks-cloud {
     font-size: 0.82rem !important;
     color: var(--text-dim) !important;
 }
 
-.powered-by a {
+.thanks-cloud a {
     color: var(--accent);
     font-weight: 500;
     transition: opacity var(--transition);
 }
 
-.powered-by a:hover {
+.thanks-cloud a:hover {
     opacity: 0.7;
 }
 
