@@ -2,7 +2,6 @@ const i18n = {
     en: {
         'welcome.text': 'Welcome to my corner of the internet',
         'welcome.enter': 'Enter',
-        'welcome.hint': 'Hint: try typing "li"',
         'egg.collected': 'Eggs',
         'nav.about': 'About',
         'nav.projects': 'Projects',
@@ -49,7 +48,6 @@ const i18n = {
     cn: {
         'welcome.text': '欢迎来到我的互联网小角落',
         'welcome.enter': '进入',
-        'welcome.hint': '提示：试试打字 "li"',
         'egg.collected': '彩蛋',
         'nav.about': '关于',
         'nav.projects': '项目',
@@ -96,7 +94,6 @@ const i18n = {
     jp: {
         'welcome.text': '私のインターネットの片隅へようこそ',
         'welcome.enter': '入る',
-        'welcome.hint': 'ヒント："li" と打ってみて',
         'egg.collected': 'エッグ',
         'nav.about': '自己紹介',
         'nav.projects': 'プロジェクト',
@@ -228,8 +225,8 @@ const eggCountEl = document.getElementById('eggCount');
 const mouseTrail = document.getElementById('mouseTrail');
 
 const foundEggs = new Set();
-const TOTAL_EGGS = 3;
-eggCountEl.nextElementSibling.textContent = '/3';
+const TOTAL_EGGS = 6;
+eggCountEl.nextElementSibling.textContent = '/6';
 
 function markEgg(id) {
     if (foundEggs.has(id)) return;
@@ -460,16 +457,32 @@ function tickConfetti() {
 }
 
 const typeBuffer = [];
+function triggerLiEgg() {
+    markEgg('type-li');
+    launchConfetti(0.6);
+    typeBuffer.length = 0;
+}
+
 document.addEventListener('keydown', (e) => {
     if (e.key.length !== 1) return;
     typeBuffer.push(e.key.toLowerCase());
-    if (typeBuffer.length > 3) typeBuffer.shift();
-    if (typeBuffer.join('') === 'li') {
-        markEgg('type-li');
-        launchConfetti(0.6);
-        typeBuffer.length = 0;
+    if (typeBuffer.length > 6) typeBuffer.shift();
+    const recent = typeBuffer.slice(-2).join('');
+    if (recent === 'li') {
+        triggerLiEgg();
     }
 });
+
+const heroName = document.querySelector('.hero .name');
+if (heroName) {
+    heroName.style.cursor = 'pointer';
+    heroName.addEventListener('click', () => {
+        triggerLiEgg();
+        heroName.classList.remove('name-pulse');
+        void heroName.offsetWidth;
+        heroName.classList.add('name-pulse');
+    });
+}
 
 let logoClicks = 0;
 let logoTimer = null;
@@ -520,6 +533,65 @@ if (window.DeviceMotionEvent) {
         }
     });
 }
+
+
+const heroBadge = document.querySelector('.hero-badge');
+if (heroBadge) {
+    let badgeClicks = 0;
+    let badgeTimer = null;
+    heroBadge.style.cursor = 'pointer';
+    heroBadge.addEventListener('click', () => {
+        badgeClicks++;
+        clearTimeout(badgeTimer);
+        if (badgeClicks >= 2) {
+            markEgg('badge2');
+            launchConfetti(0.8);
+            heroBadge.classList.remove('badge-pop');
+            void heroBadge.offsetWidth;
+            heroBadge.classList.add('badge-pop');
+            badgeClicks = 0;
+        } else {
+            badgeTimer = setTimeout(() => { badgeClicks = 0; }, 600);
+        }
+    });
+}
+
+const thanksCloud = document.querySelector('.thanks-cloud');
+if (thanksCloud) {
+    let hoverCount = 0;
+    thanksCloud.addEventListener('mouseenter', () => {
+        hoverCount++;
+        if (hoverCount >= 3) {
+            markEgg('footer5');
+            launchConfetti(0.7);
+            thanksCloud.classList.remove('thanks-glow');
+            void thanksCloud.offsetWidth;
+            thanksCloud.classList.add('thanks-glow');
+            hoverCount = 0;
+        }
+    });
+}
+
+document.querySelectorAll('.project-info h3').forEach(h3 => {
+    let titleClicks = 0;
+    let titleTimer = null;
+    h3.style.cursor = 'pointer';
+    h3.addEventListener('click', (e) => {
+        e.stopPropagation();
+        titleClicks++;
+        clearTimeout(titleTimer);
+        if (titleClicks >= 3) {
+            markEgg('projectTitle3');
+            launchConfetti(0.7);
+            h3.classList.remove('title-bump');
+            void h3.offsetWidth;
+            h3.classList.add('title-bump');
+            titleClicks = 0;
+        } else {
+            titleTimer = setTimeout(() => { titleClicks = 0; }, 1200);
+        }
+    });
+});
 
 
 const aboutCard = document.querySelector('.about-card');
