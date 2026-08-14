@@ -1,7 +1,9 @@
 const i18n = {
     en: {
         'nav.about': 'About',
+        'nav.skills': 'Skills',
         'nav.projects': 'Projects',
+        'nav.timeline': 'Timeline',
         'nav.contact': 'Contact',
         'hero.status': 'Available for collaboration',
         'hero.greeting': "Hello, I'm",
@@ -12,9 +14,15 @@ const i18n = {
         'about.title': 'About Me',
         'about.p1': "I'm a maker and developer passionate about embedded systems and MicroPython. I love turning small ideas into working hardware projects, from simple button interactions to animated screen displays.",
         'about.p2': 'My main playground is the M5Stack Cardputer 1.1 — a compact, hacker-friendly device with a keyboard, screen, and plenty of GPIO. I iterate on each feature in versions, documenting every step along the way.',
+        'about.p3': 'I believe in open source and share everything under GPL-3.0. Whether you are a beginner or a fellow hardware enthusiast, feel free to explore, fork, and collaborate.',
         'about.stat1': 'Project Versions',
         'about.stat2': 'Modules',
         'about.stat3': 'Open Source',
+        'about.stat4': 'Repositories',
+        'skills.title': 'Skills',
+        'skills.cat1': 'Languages',
+        'skills.cat2': 'Hardware & Tools',
+        'skills.cat3': 'Concepts',
         'projects.title': 'Projects',
         'projects.filterAll': 'All',
         'projects.filterEmbedded': 'Embedded',
@@ -23,51 +31,120 @@ const i18n = {
         'projects.p1.desc': 'MicroPython learning project for Cardputer 1.1 — buttons, screens, keyboards, with version-tracked iterations.',
         'projects.p2.desc': 'Shake-to-roll dice with single/dual mode, tumbling animation, and sound feedback. GPL-3.0 licensed.',
         'projects.p3.desc': 'An answer book, coin flip, dice roller, daily fortune, and lucky number — all in one app for Cardputer 1.1.',
-        'projects.p4.desc': 'A desktop companion robot project.',
+        'projects.p4.desc': 'A desktop companion robot project with interactive features.',
         'projects.p5.desc': 'A welcome repository — greeting everyone who follows and inviting collaboration.',
         'projects.p6.desc': 'Reference library collection for StackChan robot development.',
+        'timeline.title': 'Version Timeline',
+        'timeline.t1': '7-color rainbow cycle with precomputed 210-frame sequence and bitwise RGB optimization.',
+        'timeline.t2': 'UI polish: blue header bar, large character display, real-time count on screen.',
+        'timeline.t3': 'Rainbow color cycle with RGB fade transition animation between colors.',
+        'timeline.t4': 'Keyboard input with real-time keypress counting and backspace correction.',
+        'timeline.t5': 'Double-click to continue with bounce animation effect on screen.',
+        'timeline.t6': 'First versions of all three modules — basic button, keyboard input, and rainbow display.',
         'contact.title': 'Get in Touch',
         'contact.intro': 'Always open to new ideas, collaborations, and friendly chats. Feel free to reach out!',
         'contact.wechat': 'WeChat',
         'contact.rednote': 'RedNote',
         'contact.rednoteDesc': 'See AnswerBook repo',
-        'footer.text': 'Built with passion & MicroPython',
         'footer.backTop': 'Back to top \u2191'
     },
     cn: {
-        'nav.about': '\u5173\u4e8e',
-        'nav.projects': '\u9879\u76ee',
-        'nav.contact': '\u8054\u7cfb',
-        'hero.status': '\u6b22\u8fce\u5408\u4f5c',
-        'hero.greeting': '\u4f60\u597d\uff0c\u6211\u662f',
-        'hero.subtitle': 'Maker \u00b7 MicroPython \u5f00\u53d1\u8005 \u00b7 \u786c\u4ef6\u6781\u5ba2',
-        'hero.desc': '\u5728 M5Stack Cardputer \u4e0a\u7528 MicroPython \u6253\u9020\u6709\u8da3\u7684\u9879\u76ee\u3002\u63a2\u7d22\u6309\u952e\u3001\u5c4f\u5e55\u3001\u952e\u76d8\uff0c\u4ee5\u53ca\u4e00\u5207\u53ef\u80fd\u3002',
-        'hero.cta1': '\u67e5\u770b\u9879\u76ee',
-        'hero.cta2': '\u8054\u7cfb\u6211',
-        'about.title': '\u5173\u4e8e\u6211',
-        'about.p1': '\u6211\u662f\u4e00\u540d\u5d4c\u5165\u5f0f\u7cfb\u7edf\u548c MicroPython \u7231\u597d\u8005\u3002\u6211\u559c\u6b22\u628a\u5c0f\u70b9\u5b50\u53d8\u6210\u53ef\u8fd0\u884c\u7684\u786c\u4ef6\u9879\u76ee\uff0c\u4ece\u7b80\u5355\u7684\u6309\u952e\u4ea4\u4e92\u5230\u52a8\u753b\u5c4f\u5e55\u663e\u793a\u3002',
-        'about.p2': '\u6211\u7684\u4e3b\u8985\u624b\u53f0\u662f M5Stack Cardputer 1.1 \u2014 \u4e00\u53f0\u7d27\u51d1\u3001\u9ed1\u5ba2\u53cb\u597d\u7684\u8bbe\u5907\uff0c\u5e26\u6709\u952e\u76d8\u3001\u5c4f\u5e55\u548c\u4e30\u5bcc\u7684 GPIO\u3002\u6211\u6309\u7248\u672c\u8fed\u4ee3\u6bcf\u4e2a\u529f\u80fd\uff0c\u5e76\u8bb0\u5f55\u6bcf\u4e00\u6b65\u3002',
-        'about.stat1': '\u9879\u76ee\u7248\u672c',
-        'about.stat2': '\u529f\u80fd\u6a21\u5757',
-        'about.stat3': '\u5f00\u6e90\u534f\u8bae',
-        'projects.title': '\u9879\u76ee',
-        'projects.filterAll': '\u5168\u90e8',
-        'projects.filterEmbedded': '\u5d4c\u5165\u5f0f',
-        'projects.filterGame': '\u6e38\u620f',
-        'projects.filterOther': '\u5176\u4ed6',
-        'projects.p1.desc': 'Cardputer 1.1 \u7684 MicroPython \u5b66\u4e60\u9879\u76ee \u2014 \u6309\u952e\u3001\u5c4f\u5e55\u3001\u952e\u76d8\uff0c\u5e26\u6709\u7248\u672c\u8ffd\u8e2a\u8fed\u4ee3\u3002',
-        'projects.p2.desc': '\u6447\u4e00\u6447\u64b0\u9ab0\u5b50\uff0c\u652f\u6301\u5355/\u53cc\u9ab0\u6a21\u5f0f\u3001\u7ffb\u6eda\u52a8\u753b\u548c\u97f3\u6548\u53cd\u9988\u3002GPL-3.0 \u5f00\u6e90\u3002',
-        'projects.p3.desc': '\u7b54\u6848\u4e4b\u4e66\u3001\u629b\u786c\u5e01\u3001\u64b0\u9ab0\u5b50\u3001\u4eca\u65e5\u8fd0\u52bf\u3001\u5e78\u8fd0\u6570\u5b57 \u2014 \u5168\u90e8\u96c6\u6210\u5728 Cardputer 1.1 \u4e0a\u3002',
-        'projects.p4.desc': '\u4e00\u4e2a\u684c\u9762\u4f34\u4fa3\u673a\u5668\u4eba\u9879\u76ee\u3002',
-        'projects.p5.desc': '\u4e00\u4e2a\u6b22\u8fce\u4ed3\u5e93 \u2014 \u5411\u6bcf\u4e00\u4f4d\u5173\u6ce8\u8005\u95ee\u597d\uff0c\u9080\u8bf7\u5408\u4f5c\u3002',
-        'projects.p6.desc': 'StackChan \u673a\u5668\u4eba\u5f00\u53d1\u7684\u53c2\u8003\u8d44\u6599\u5e93\u96c6\u5408\u3002',
-        'contact.title': '\u8054\u7cfb\u6211',
-        'contact.intro': '\u59cb\u7ec8\u6b22\u8fce\u65b0\u60f3\u6cd5\u3001\u5408\u4f5c\u548c\u53cb\u597d\u4ea4\u6d41\u3002\u968f\u65f6\u8054\u7cfb\uff01',
-        'contact.wechat': '\u5fae\u4fe1',
-        'contact.rednote': '\u5c0f\u7ea2\u4e66',
-        'contact.rednoteDesc': '\u89c1 AnswerBook \u4ed3\u5e93',
-        'footer.text': '\u7528\u70ed\u60c5 & MicroPython \u6784\u5efa',
-        'footer.backTop': '\u8fd4\u56de\u9876\u90e8 \u2191'
+        'nav.about': '关于',
+        'nav.skills': '技能',
+        'nav.projects': '项目',
+        'nav.timeline': '版本历程',
+        'nav.contact': '联系',
+        'hero.status': '欢迎合作',
+        'hero.greeting': '你好，我是',
+        'hero.subtitle': 'Maker · MicroPython 开发者 · 硬件极客',
+        'hero.desc': '在 M5Stack Cardputer 上用 MicroPython 打造有趣的项目。探索按键、屏幕、键盘，以及一切可能。',
+        'hero.cta1': '查看项目',
+        'hero.cta2': '联系我',
+        'about.title': '关于我',
+        'about.p1': '我是一名嵌入式系统和 MicroPython 爱好者。我喜欢把小点子变成可运行的硬件项目，从简单的按键交互到动画屏幕显示。',
+        'about.p2': '我的主要舞台是 M5Stack Cardputer 1.1 — 一台紧凑、黑客友好的设备，拥有键盘、屏幕和丰富的 GPIO。我按版本迭代每个功能，并记录每一步。',
+        'about.p3': '我相信开源精神，所有项目均以 GPL-3.0 协议分享。无论你是初学者还是同好，欢迎探索、Fork 和协作。',
+        'about.stat1': '项目版本',
+        'about.stat2': '功能模块',
+        'about.stat3': '开源协议',
+        'about.stat4': '仓库数量',
+        'skills.title': '技能',
+        'skills.cat1': '编程语言',
+        'skills.cat2': '硬件与工具',
+        'skills.cat3': '概念与方法',
+        'projects.title': '项目',
+        'projects.filterAll': '全部',
+        'projects.filterEmbedded': '嵌入式',
+        'projects.filterGame': '游戏',
+        'projects.filterOther': '其他',
+        'projects.p1.desc': 'Cardputer 1.1 的 MicroPython 学习项目 — 按键、屏幕、键盘，带有版本追踪迭代。',
+        'projects.p2.desc': '摇一摇掷骰子，支持单/双骰模式、翻滚动画和音效反馈。GPL-3.0 开源。',
+        'projects.p3.desc': '答案之书、抛硬币、投骰子、今日运势、幸运数字 — 全部集成在 Cardputer 1.1 上。',
+        'projects.p4.desc': '带有交互功能的桌面陪伴机器人项目。',
+        'projects.p5.desc': '一个欢迎仓库 — 向每一位关注者问好，邀请合作。',
+        'projects.p6.desc': 'StackChan 机器人开发的参考资料库集合。',
+        'timeline.title': '版本历程',
+        'timeline.t1': '7 色彩虹循环，预计算 210 帧序列，位运算优化 RGB 拆分与合成。',
+        'timeline.t2': 'UI 美化：蓝色标题栏、大字号字符显示、屏幕实时计数。',
+        'timeline.t3': '彩虹色循环，颜色间通过 RGB 插值实现淡入淡出过渡动画。',
+        'timeline.t4': '键盘输入，实时统计按键次数，支持退格修正。',
+        'timeline.t5': '双击继续交互，带弹跳动画效果。',
+        'timeline.t6': '三个模块的初版 — 基础按键、键盘输入、彩虹显示。',
+        'contact.title': '联系我',
+        'contact.intro': '始终欢迎新想法、合作和友好交流。随时联系！',
+        'contact.wechat': '微信',
+        'contact.rednote': '小红书',
+        'contact.rednoteDesc': '见 AnswerBook 仓库',
+        'footer.backTop': '返回顶部 \u2191'
+    },
+    jp: {
+        'nav.about': '自己紹介',
+        'nav.skills': 'スキル',
+        'nav.projects': 'プロジェクト',
+        'nav.timeline': 'バージョン',
+        'nav.contact': '連絡',
+        'hero.status': 'コラボ募集中',
+        'hero.greeting': 'こんにちは、',
+        'hero.subtitle': 'Maker · MicroPython開発者 · ハードウェア愛好家',
+        'hero.desc': 'M5Stack CardputerでMicroPythonを使って楽しいプロジェクトを作成。ボタン、スクリーン、キーボードなど、あらゆる可能性を探検。',
+        'hero.cta1': 'プロジェクトを見る',
+        'hero.cta2': '連絡する',
+        'about.title': '自己紹介',
+        'about.p1': '組み込みシステムとMicroPythonに情熱を持つMaker兼開発者です。小さなアイデアを実動作するハードウェアプロジェクトに変えるのが好きです。',
+        'about.p2': '主な作業場はM5Stack Cardputer 1.1 — キーボード、スクリーン、豊富なGPIOを備えたコンパクトでハッカー向けのデバイスです。',
+        'about.p3': 'オープンソースを信じ、すべてをGPL-3.0で公開しています。初心者の方も経験者の方も、お気軽に探索・Fork・コラボしてください。',
+        'about.stat1': 'プロジェクト版',
+        'about.stat2': 'モジュール',
+        'about.stat3': 'オープンソース',
+        'about.stat4': 'リポジトリ',
+        'skills.title': 'スキル',
+        'skills.cat1': 'プログラミング',
+        'skills.cat2': 'ハードウェアとツール',
+        'skills.cat3': '概念と手法',
+        'projects.title': 'プロジェクト',
+        'projects.filterAll': 'すべて',
+        'projects.filterEmbedded': '組み込み',
+        'projects.filterGame': 'ゲーム',
+        'projects.filterOther': 'その他',
+        'projects.p1.desc': 'Cardputer 1.1向けMicroPython学習プロジェクト — ボタン、スクリーン、キーボードのバージョン追跡あり。',
+        'projects.p2.desc': '振って転がすダイス。シングル/デュアルモード、回転アニメーション、フィードバック音。GPL-3.0。',
+        'projects.p3.desc': '答えの本、コイントス、ダイス、今日の運勢、ラッキーナンバー — すべてCardputer 1.1に。',
+        'projects.p4.desc': 'インタラクティブ機能を備えたデスクトップコンパニオンロボットプロジェクト。',
+        'projects.p5.desc': 'ウェルカムリポジトリ — フォロワー全員に挨拶し、コラボを招待。',
+        'projects.p6.desc': 'StackChanロボット開発のための参照ライブラリコレクション。',
+        'timeline.title': 'バージョン履歴',
+        'timeline.t1': '7色レインボーサイクル、210フレームの事前計算、ビット演算によるRGB最適化。',
+        'timeline.t2': 'UI美化：ブルーヘッダー、大文字フォント表示、リアルタイムカウント。',
+        'timeline.t3': 'RGBフェード遷移アニメーション付きレインボーサイクル。',
+        'timeline.t4': 'リアルタイムキーカウントとバックスペース補正付きキーボード入力。',
+        'timeline.t5': 'バウンスアニメーション付きダブルクリック継続。',
+        'timeline.t6': '3つのモジュールの初版 — 基本ボタン、キーボード入力、レインボー表示。',
+        'contact.title': '連絡先',
+        'contact.intro': '新しいアイデア、コラボ、フレンドリーなチャットを歓迎します。お気軽にどうぞ！',
+        'contact.wechat': 'WeChat',
+        'contact.rednote': 'RedNote',
+        'contact.rednoteDesc': 'AnswerBookリポジトリを参照',
+        'footer.backTop': 'トップに戻る \u2191'
     }
 };
 
@@ -80,23 +157,26 @@ function applyI18n(lang) {
             el.textContent = i18n[lang][key];
         }
     });
-    document.documentElement.lang = lang === 'cn' ? 'zh-CN' : 'en';
+    document.documentElement.lang = lang === 'cn' ? 'zh-CN' : lang === 'jp' ? 'ja' : 'en';
 }
 
 const navbar = document.getElementById('navbar');
-const langToggle = document.getElementById('langToggle');
+const langBtns = document.querySelectorAll('.lang-btn');
 const themeToggle = document.getElementById('themeToggle');
 const mobileMenu = document.getElementById('mobileMenu');
-const navLinks = document.querySelector('.nav-links');
+const navLinks = document.getElementById('navLinks');
 
 window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 40);
 });
 
-langToggle.addEventListener('click', () => {
-    currentLang = currentLang === 'en' ? 'cn' : 'en';
-    langToggle.textContent = currentLang === 'en' ? 'CN' : 'EN';
-    applyI18n(currentLang);
+langBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        langBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLang = btn.getAttribute('data-lang');
+        applyI18n(currentLang);
+    });
 });
 
 themeToggle.addEventListener('click', () => {
@@ -146,9 +226,9 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
 
-document.querySelectorAll('.section-header, .about-text, .about-card, .project-card, .contact-card, .contact-intro, .project-filter').forEach(el => {
+document.querySelectorAll('.section-header, .about-text, .about-visual, .skill-category, .project-card, .timeline-item, .contact-card, .contact-intro, .project-filter').forEach(el => {
     el.classList.add('fade-in');
     observer.observe(el);
 });
 
-document.getElementById('year').textContent = new Date().getFullYear();
+applyI18n(currentLang);

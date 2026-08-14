@@ -6,7 +6,7 @@
     <title>li · Maker & Developer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,11 +14,17 @@
     <nav class="navbar" id="navbar">
         <div class="nav-container">
             <a href="#home" class="nav-logo">li<span class="dot">.</span></a>
-            <div class="nav-links">
+            <div class="nav-links" id="navLinks">
                 <a href="#about" data-i18n="nav.about">About</a>
+                <a href="#skills" data-i18n="nav.skills">Skills</a>
                 <a href="#projects" data-i18n="nav.projects">Projects</a>
+                <a href="#timeline" data-i18n="nav.timeline">Timeline</a>
                 <a href="#contact" data-i18n="nav.contact">Contact</a>
-                <button class="lang-toggle" id="langToggle">CN</button>
+                <div class="lang-switch">
+                    <button class="lang-btn active" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="cn">中</button>
+                    <button class="lang-btn" data-lang="jp">日</button>
+                </div>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                     <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
                     <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -32,6 +38,8 @@
 
     <section class="hero" id="home">
         <div class="hero-bg">
+            <div class="hero-image" style="background-image: url('images/hero-bg.jpg');"></div>
+            <div class="hero-overlay"></div>
             <div class="grid-overlay"></div>
             <div class="gradient-orb orb-1"></div>
             <div class="gradient-orb orb-2"></div>
@@ -53,13 +61,14 @@
             </p>
             <div class="hero-cta">
                 <a href="#projects" class="btn btn-primary" data-i18n="hero.cta1">View Projects</a>
-                <a href="#contact" class="btn btn-ghost" data-i18n="hero.cta2">Get in Touch</a>
+                <a href="#contact" class="btn-ghost" data-i18n="hero.cta2">Get in Touch</a>
             </div>
             <div class="hero-tech">
                 <span>MicroPython</span>
                 <span>Cardputer 1.1</span>
                 <span>Python</span>
                 <span>Embedded</span>
+                <span>GPL-3.0</span>
             </div>
         </div>
         <a href="#about" class="scroll-indicator">
@@ -82,6 +91,9 @@
                     <p data-i18n="about.p2">
                         My main playground is the M5Stack Cardputer 1.1 — a compact, hacker-friendly device with a keyboard, screen, and plenty of GPIO. I iterate on each feature in versions, documenting every step along the way.
                     </p>
+                    <p data-i18n="about.p3">
+                        I believe in open source and share everything under GPL-3.0. Whether you're a beginner or a fellow hardware enthusiast, feel free to explore, fork, and collaborate.
+                    </p>
                     <div class="about-stats">
                         <div class="stat">
                             <span class="stat-num">8+</span>
@@ -92,21 +104,39 @@
                             <span class="stat-label" data-i18n="about.stat2">Modules</span>
                         </div>
                         <div class="stat">
+                            <span class="stat-num">6</span>
+                            <span class="stat-label" data-i18n="about.stat4">Repos</span>
+                        </div>
+                        <div class="stat">
                             <span class="stat-num">GPL-3.0</span>
                             <span class="stat-label" data-i18n="about.stat3">Open Source</span>
                         </div>
                     </div>
                 </div>
-                <div class="about-card">
-                    <div class="card-glow"></div>
-                    <div class="card-header">
-                        <div class="card-dots">
-                            <span></span><span></span><span></span>
-                        </div>
-                        <span class="card-title">li@cardputer</span>
+                <div class="about-visual">
+                    <div class="about-logo">
+                        <div class="logo-ring"></div>
+                        <svg viewBox="0 0 120 120" class="logo-svg">
+                            <defs>
+                                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#7c5cfc"/>
+                                    <stop offset="100%" style="stop-color:#22d3ee"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="35" y="35" width="50" height="50" rx="6" fill="none" stroke="url(#logoGrad)" stroke-width="3"/>
+                            <text x="60" y="74" text-anchor="middle" fill="url(#logoGrad)" font-size="28" font-weight="800" font-family="Inter">li</text>
+                            <circle cx="60" cy="60" r="58" fill="none" stroke="url(#logoGrad)" stroke-width="1" opacity="0.3"/>
+                        </svg>
                     </div>
-                    <div class="card-body">
-                        <pre><code><span class="c-key">import</span> machine
+                    <div class="about-card">
+                        <div class="card-header">
+                            <div class="card-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <span class="card-title">li@cardputer</span>
+                        </div>
+                        <div class="card-body">
+<pre><code><span class="c-key">import</span> machine
 <span class="c-key">import</span> time
 
 <span class="c-fn">while</span> <span class="c-val">True</span>:
@@ -114,6 +144,76 @@
     <span class="c-key">if</span> btn:
         screen.text(<span class="c-str">"Hello!"</span>)
     time.sleep(<span class="c-num">0.1</span>)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="skills" id="skills">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-num">02</span>
+                <h2 class="section-title" data-i18n="skills.title">Skills</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3 class="skill-cat-title" data-i18n="skills.cat1">Languages</h3>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>MicroPython</span><span class="skill-pct">90%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 90%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Python</span><span class="skill-pct">85%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 85%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>JavaScript</span><span class="skill-pct">70%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 70%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>HTML / CSS</span><span class="skill-pct">80%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 80%"></div></div>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="skill-cat-title" data-i18n="skills.cat2">Hardware & Tools</h3>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Cardputer 1.1</span><span class="skill-pct">95%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 95%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>M5Stack</span><span class="skill-pct">85%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 85%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>GPIO / Sensors</span><span class="skill-pct">80%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 80%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Git / GitHub</span><span class="skill-pct">75%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 75%"></div></div>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3 class="skill-cat-title" data-i18n="skills.cat3">Concepts</h3>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Embedded Design</span><span class="skill-pct">85%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 85%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>UI / UX for Small Screens</span><span class="skill-pct">80%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 80%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Animation & Effects</span><span class="skill-pct">75%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 75%"></div></div>
+                    </div>
+                    <div class="skill-item">
+                        <div class="skill-info"><span>Version Iteration</span><span class="skill-pct">90%</span></div>
+                        <div class="skill-bar"><div class="skill-fill" style="--pct: 90%"></div></div>
                     </div>
                 </div>
             </div>
@@ -121,9 +221,10 @@
     </section>
 
     <section class="projects" id="projects">
+        <div class="section-bg" style="background-image: url('images/projects-bg.jpg');"></div>
         <div class="container">
             <div class="section-header">
-                <span class="section-num">02</span>
+                <span class="section-num">03</span>
                 <h2 class="section-title" data-i18n="projects.title">Projects</h2>
                 <div class="section-line"></div>
             </div>
@@ -146,6 +247,7 @@
                             <span>MicroPython</span>
                             <span>Cardputer</span>
                             <span>Hardware</span>
+                            <span>GPL-3.0</span>
                         </div>
                         <div class="project-links">
                             <a href="https://github.com/TOTOLZQ/li-learn-micropython" target="_blank" rel="noopener">GitHub &rarr;</a>
@@ -164,6 +266,7 @@
                             <span>MicroPython</span>
                             <span>Dice</span>
                             <span>Motion</span>
+                            <span>GPL-3.0</span>
                         </div>
                         <div class="project-links">
                             <a href="https://github.com/TOTOLZQ/Stick-Dice" target="_blank" rel="noopener">GitHub &rarr;</a>
@@ -195,10 +298,11 @@
                     </div>
                     <div class="project-info">
                         <h3>Mochi-Desktop-Robot</h3>
-                        <p data-i18n="projects.p4.desc">A desktop companion robot project.</p>
+                        <p data-i18n="projects.p4.desc">A desktop companion robot project with interactive features.</p>
                         <div class="project-tags">
                             <span>Robot</span>
                             <span>Desktop</span>
+                            <span>Companion</span>
                         </div>
                         <div class="project-links">
                             <a href="https://github.com/TOTOLZQ/Mochi-Desktop-Robot" target="_blank" rel="noopener">GitHub &rarr;</a>
@@ -216,6 +320,7 @@
                         <div class="project-tags">
                             <span>Community</span>
                             <span>Welcome</span>
+                            <span>Bilingual</span>
                         </div>
                         <div class="project-links">
                             <a href="https://github.com/TOTOLZQ/Hello" target="_blank" rel="noopener">GitHub &rarr;</a>
@@ -233,6 +338,7 @@
                         <div class="project-tags">
                             <span>Reference</span>
                             <span>Robot</span>
+                            <span>Library</span>
                         </div>
                         <div class="project-links">
                             <a href="https://github.com/TOTOLZQ/StackChan-reference-library" target="_blank" rel="noopener">GitHub &rarr;</a>
@@ -244,10 +350,71 @@
         </div>
     </section>
 
+    <section class="timeline" id="timeline">
+        <div class="section-bg" style="background-image: url('images/timeline-bg.jpg');"></div>
+        <div class="container">
+            <div class="section-header">
+                <span class="section-num">04</span>
+                <h2 class="section-title" data-i18n="timeline.title">Version Timeline</h2>
+                <div class="section-line"></div>
+            </div>
+            <div class="timeline-list">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-version">Screen3.0</span>
+                        <span class="timeline-date">2026-08-06</span>
+                        <p data-i18n="timeline.t1">7-color rainbow cycle with precomputed 210-frame sequence and bitwise RGB optimization.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-version">Keyboard2.1-Pro</span>
+                        <span class="timeline-date">2026-08-04</span>
+                        <p data-i18n="timeline.t2">UI polish: blue header bar, large character display, real-time count on screen.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-version">Screen2.0</span>
+                        <span class="timeline-date">2026-08-04</span>
+                        <p data-i18n="timeline.t3">Rainbow color cycle with RGB fade transition animation between colors.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-version">Keyboard2.0</span>
+                        <span class="timeline-date">2026-08-04</span>
+                        <p data-i18n="timeline.t4">Keyboard input with real-time keypress counting and backspace correction.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-version">Btn2.0</span>
+                        <span class="timeline-date">2026-08-03</span>
+                        <p data-i18n="timeline.t5">Double-click to continue with bounce animation effect on screen.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-version">Btn1.0 / Keyboard1.0 / Screen1.0</span>
+                        <span class="timeline-date">2026-07-31</span>
+                        <p data-i18n="timeline.t6">First versions of all three modules — basic button, keyboard input, and rainbow display.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="contact" id="contact">
         <div class="container">
             <div class="section-header">
-                <span class="section-num">03</span>
+                <span class="section-num">05</span>
                 <h2 class="section-title" data-i18n="contact.title">Get in Touch</h2>
                 <div class="section-line"></div>
             </div>
@@ -290,7 +457,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; <span id="year"></span> li · <span data-i18n="footer.text">Built with passion & MicroPython</span></p>
+            <p>&copy; 2024-2026 li</p>
             <a href="#home" class="back-top" data-i18n="footer.backTop">Back to top &uarr;</a>
         </div>
     </footer>
