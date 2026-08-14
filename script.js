@@ -277,22 +277,34 @@ resizeConfetti();
 window.addEventListener('resize', resizeConfetti);
 
 function launchConfetti(intensity = 1) {
-    const colors = ['#7c5cfc', '#a78bfa', '#22d3ee', '#4ade80', '#f59e0b', '#f472b6', '#ef4444', '#fb923c'];
-    const count = Math.floor(180 * intensity);
-    const fromLeft = Math.random() < 0.5;
+    const colors = ['#7c5cfc', '#a78bfa', '#22d3ee', '#4ade80', '#f59e0b', '#f472b6', '#ef4444', '#fb923c', '#fde68a', '#a7f3d0'];
+    const count = Math.floor(260 * intensity);
+    const shapes = ['rect', 'circle', 'ribbon'];
     for (let i = 0; i < count; i++) {
-        const w = 6 + Math.random() * 8;
-        const h = 4 + Math.random() * 8;
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        const w = shape === 'ribbon' ? 4 : (6 + Math.random() * 8);
+        const h = shape === 'ribbon' ? 18 + Math.random() * 14 : (4 + Math.random() * 8);
+        const fromSide = Math.floor(Math.random() * 3);
+        let sx, sy, vx, vy;
+        if (fromSide === 0) {
+            sx = -20; sy = confettiCanvas.height * (0.2 + Math.random() * 0.5);
+            vx = 6 + Math.random() * 12; vy = -4 - Math.random() * 8;
+        } else if (fromSide === 1) {
+            sx = confettiCanvas.width + 20; sy = confettiCanvas.height * (0.2 + Math.random() * 0.5);
+            vx = -6 - Math.random() * 12; vy = -4 - Math.random() * 8;
+        } else {
+            sx = confettiCanvas.width * (0.2 + Math.random() * 0.6); sy = -20;
+            vx = (Math.random() - 0.5) * 10; vy = 2 + Math.random() * 4;
+        }
         confettiPieces.push({
-            x: fromLeft ? -20 : confettiCanvas.width + 20,
-            y: confettiCanvas.height * 0.2 + Math.random() * confettiCanvas.height * 0.4,
-            w, h,
+            x: sx, y: sy, w, h, shape,
             color: colors[Math.floor(Math.random() * colors.length)],
-            vx: (fromLeft ? 6 : -6) + Math.random() * (fromLeft ? 10 : -10),
-            vy: -6 - Math.random() * 8,
-            gravity: 0.22 + Math.random() * 0.08,
+            vx, vy,
+            gravity: 0.18 + Math.random() * 0.08,
             rot: Math.random() * Math.PI * 2,
             vr: (Math.random() - 0.5) * 0.3,
+            swing: 0.02 + Math.random() * 0.03,
+            swingPhase: Math.random() * Math.PI * 2,
             life: 1
         });
     }
@@ -307,10 +319,12 @@ function tickConfetti() {
     for (let i = confettiPieces.length - 1; i >= 0; i--) {
         const p = confettiPieces[i];
         p.vy += p.gravity;
+        p.swingPhase += p.swing;
+        p.vx += Math.sin(p.swingPhase) * 0.25;
         p.x += p.vx;
         p.y += p.vy;
         p.rot += p.vr;
-        p.life -= 0.004;
+        p.life -= 0.003;
         if (p.y > confettiCanvas.height + 30 || p.life <= 0) {
             confettiPieces.splice(i, 1);
             continue;
@@ -321,7 +335,17 @@ function tickConfetti() {
         cctx.translate(p.x, p.y);
         cctx.rotate(p.rot);
         cctx.fillStyle = p.color;
-        cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        if (p.shape === 'circle') {
+            cctx.beginPath();
+            cctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+            cctx.fill();
+        } else if (p.shape === 'ribbon') {
+            cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            cctx.fillStyle = 'rgba(255,255,255,0.3)';
+            cctx.fillRect(-p.w / 2, -p.h / 2, p.w / 3, p.h);
+        } else {
+            cctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
         cctx.restore();
     }
     if (alive > 0) {
@@ -332,10 +356,14 @@ function tickConfetti() {
     }
 }
 
-const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
 let konamiIdx = 0;
+let lastKonamiTime = 0;
 document.addEventListener('keydown', (e) => {
-    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    const now = Date.now();
+    if (now - lastKonamiTime > 2000) konamiIdx = 0;
+    lastKonamiTime = now;
+    const key = e.key;
     if (key === konami[konamiIdx]) {
         konamiIdx++;
         if (konamiIdx === konami.length) {
