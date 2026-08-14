@@ -12,20 +12,36 @@
 <body>
 
     <div class="welcome-screen" id="welcomeScreen">
+        <canvas class="welcome-rain" id="welcomeRain"></canvas>
         <div class="hero-bg">
             <div class="grid-overlay"></div>
             <div class="gradient-orb orb-1"></div>
             <div class="gradient-orb orb-2"></div>
         </div>
+        <div class="welcome-rings">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+        </div>
         <div class="welcome-content">
             <div class="welcome-logo">
+                <div class="logo-orbit">
+                    <span class="orbit-dot"></span>
+                    <span class="orbit-dot"></span>
+                    <span class="orbit-dot"></span>
+                </div>
                 <svg viewBox="0 0 120 120" class="welcome-logo-svg">
                     <defs>
                         <linearGradient id="welcomeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:#7c5cfc"/>
                             <stop offset="100%" style="stop-color:#22d3ee"/>
                         </linearGradient>
+                        <radialGradient id="welcomeGlow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" style="stop-color:#7c5cfc;stop-opacity:0.5"/>
+                            <stop offset="100%" style="stop-color:#7c5cfc;stop-opacity:0"/>
+                        </radialGradient>
                     </defs>
+                    <circle cx="60" cy="60" r="50" fill="url(#welcomeGlow)"/>
                     <rect x="35" y="35" width="50" height="50" rx="6" fill="none" stroke="url(#welcomeGrad)" stroke-width="3"/>
                     <text x="60" y="74" text-anchor="middle" fill="url(#welcomeGrad)" font-size="28" font-weight="800" font-family="Inter">li</text>
                     <circle cx="60" cy="60" r="58" fill="none" stroke="url(#welcomeGrad)" stroke-width="1" opacity="0.3"/>
@@ -33,7 +49,12 @@
             </div>
             <h1 class="welcome-title">li<span class="dot">.</span></h1>
             <p class="welcome-text" data-i18n="welcome.text">Welcome to my corner of the internet</p>
+            <div class="welcome-loader">
+                <div class="loader-bar"><span id="loaderFill"></span></div>
+                <span class="loader-text" id="loaderText">0%</span>
+            </div>
             <button class="welcome-enter" id="welcomeEnter" data-i18n="welcome.enter">Enter</button>
+            <p class="welcome-hint" data-i18n="welcome.hint">Hint: try ↑ ↑ ↓ ↓</p>
         </div>
     </div>
 
@@ -414,6 +435,12 @@
 
     <canvas class="confetti-canvas" id="confettiCanvas"></canvas>
     <div class="particles-layer" id="particlesLayer"></div>
+    <div class="mouse-trail" id="mouseTrail"></div>
+    <div class="egg-tracker" id="eggTracker">
+        <span class="egg-label" data-i18n="egg.collected">Eggs</span>
+        <span class="egg-count" id="eggCount">0</span>
+        <span class="egg-total">/6</span>
+    </div>
 
     <script src="script.js"></script>
 </body>

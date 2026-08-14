@@ -2,6 +2,8 @@ const i18n = {
     en: {
         'welcome.text': 'Welcome to my corner of the internet',
         'welcome.enter': 'Enter',
+        'welcome.hint': 'Hint: try ↑ ↑ ↓ ↓',
+        'egg.collected': 'Eggs',
         'nav.about': 'About',
         'nav.projects': 'Projects',
         'nav.timeline': 'Timeline',
@@ -47,6 +49,8 @@ const i18n = {
     cn: {
         'welcome.text': '欢迎来到我的互联网小角落',
         'welcome.enter': '进入',
+        'welcome.hint': '提示：试试 ↑ ↑ ↓ ↓',
+        'egg.collected': '彩蛋',
         'nav.about': '关于',
         'nav.projects': '项目',
         'nav.timeline': '版本历程',
@@ -92,6 +96,8 @@ const i18n = {
     jp: {
         'welcome.text': '私のインターネットの片隅へようこそ',
         'welcome.enter': '入る',
+        'welcome.hint': 'ヒント：↑ ↑ ↓ ↓ を試して',
+        'egg.collected': 'エッグ',
         'nav.about': '自己紹介',
         'nav.projects': 'プロジェクト',
         'nav.timeline': 'バージョン',
@@ -214,12 +220,109 @@ document.querySelectorAll('.section-header, .about-text, .about-visual, .project
 
 const welcomeScreen = document.getElementById('welcomeScreen');
 const welcomeEnter = document.getElementById('welcomeEnter');
+const welcomeRain = document.getElementById('welcomeRain');
+const loaderFill = document.getElementById('loaderFill');
+const loaderText = document.getElementById('loaderText');
+const eggTracker = document.getElementById('eggTracker');
+const eggCountEl = document.getElementById('eggCount');
+const mouseTrail = document.getElementById('mouseTrail');
+
+const foundEggs = new Set();
+const TOTAL_EGGS = 6;
+
+function markEgg(id) {
+    if (foundEggs.has(id)) return;
+    foundEggs.add(id);
+    eggTracker.classList.add('visible');
+    eggCountEl.textContent = foundEggs.size;
+    eggCountEl.classList.add('bump');
+    setTimeout(() => eggCountEl.classList.remove('bump'), 300);
+    if (foundEggs.size === TOTAL_EGGS) {
+        eggTracker.classList.add('egg-complete');
+        launchConfetti(1.8);
+        setTimeout(() => eggTracker.classList.remove('egg-complete'), 800);
+    }
+}
+
+function runRain() {
+    if (!welcomeRain) return;
+    const ctx = welcomeRain.getContext('2d');
+    const resize = () => {
+        welcomeRain.width = welcomeScreen.offsetWidth;
+        welcomeRain.height = welcomeScreen.offsetHeight;
+    };
+    resize();
+    const fontSize = 14;
+    let columns = Math.floor(welcomeRain.width / fontSize);
+    let drops = new Array(columns).fill(0).map(() => Math.random() * welcomeRain.height);
+    const chars = 'li01010101MicroPython<>{}[]/*+-=MicroPython';
+    let running = true;
+    window.addEventListener('resize', resize);
+
+    function draw() {
+        if (!running) return;
+        ctx.fillStyle = 'rgba(245, 245, 250, 0.08)';
+        ctx.fillRect(0, 0, welcomeRain.width, welcomeRain.height);
+        ctx.font = fontSize + 'px JetBrains Mono, monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const text = chars.charAt(Math.floor(Math.random() * chars.length));
+            const x = i * fontSize;
+            const y = drops[i];
+            ctx.fillStyle = Math.random() > 0.97 ? '#22d3ee' : 'rgba(124, 92, 252, 0.6)';
+            ctx.fillText(text, x, y);
+            if (y > welcomeRain.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i] += fontSize;
+        }
+        if (welcomeScreen.classList.contains('hidden')) {
+            running = false;
+            return;
+        }
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+let progress = 0;
+const enterBtn = welcomeEnter;
+enterBtn.classList.add('disabled');
+const progressTimer = setInterval(() => {
+    progress += 1 + Math.random() * 3;
+    if (progress >= 100) {
+        progress = 100;
+        clearInterval(progressTimer);
+        enterBtn.classList.remove('disabled');
+        enterBtn.classList.add('ready');
+    }
+    if (loaderFill) loaderFill.style.width = progress + '%';
+    if (loaderText) loaderText.textContent = Math.floor(progress) + '%';
+}, 30);
+
+runRain();
 
 welcomeEnter.addEventListener('click', () => {
+    if (enterBtn.classList.contains('disabled')) return;
     welcomeScreen.classList.add('hidden');
+    markEgg('enter');
     setTimeout(() => {
         welcomeScreen.style.display = 'none';
     }, 800);
+});
+
+let lastTrailTime = 0;
+document.addEventListener('mousemove', (e) => {
+    const now = Date.now();
+    if (now - lastTrailTime < 30) return;
+    lastTrailTime = now;
+    const dot = document.createElement('div');
+    dot.className = 'trail-dot';
+    dot.style.left = (e.clientX - 3) + 'px';
+    dot.style.top = (e.clientY - 3) + 'px';
+    const tx = (Math.random() - 0.5) * 30;
+    const ty = (Math.random() - 0.5) * 30;
+    dot.style.setProperty('--tx', tx + 'px');
+    dot.style.setProperty('--ty', ty + 'px');
+    mouseTrail.appendChild(dot);
+    setTimeout(() => dot.remove(), 600);
 });
 
 function createRipple(e) {
@@ -368,10 +471,23 @@ document.addEventListener('keydown', (e) => {
         konamiIdx++;
         if (konamiIdx === konami.length) {
             launchConfetti(1.5);
+            markEgg('konami');
             konamiIdx = 0;
         }
     } else {
         konamiIdx = (key === konami[0]) ? 1 : 0;
+    }
+});
+
+const typeBuffer = [];
+document.addEventListener('keydown', (e) => {
+    if (e.key.length !== 1) return;
+    typeBuffer.push(e.key.toLowerCase());
+    if (typeBuffer.length > 3) typeBuffer.shift();
+    if (typeBuffer.join('') === 'li') {
+        markEgg('type-li');
+        launchConfetti(0.6);
+        typeBuffer.length = 0;
     }
 });
 
@@ -388,6 +504,7 @@ navLogo.addEventListener('click', (e) => {
     logoTimer = setTimeout(() => {
         if (logoClicks >= 5) {
             launchConfetti(2);
+            markEgg('logo5');
             if (!document.querySelector('.surprise-overlay')) {
                 const ov = document.createElement('div');
                 ov.className = 'surprise-overlay';
@@ -402,6 +519,39 @@ navLogo.addEventListener('click', (e) => {
         logoClicks = 0;
     }, 1200);
 });
+
+const heroTitle = document.querySelector('.hero-title');
+let titleClicks = 0;
+let titleTimer = null;
+if (heroTitle) {
+    heroTitle.addEventListener('click', () => {
+        titleClicks++;
+        clearTimeout(titleTimer);
+        titleTimer = setTimeout(() => titleClicks = 0, 1000);
+        if (titleClicks >= 3) {
+            launchConfetti(0.8);
+            markEgg('title3');
+            titleClicks = 0;
+        }
+    });
+}
+
+const backTopBtn = document.querySelector('.back-top');
+let pressTimer = null;
+if (backTopBtn) {
+    const startPress = () => {
+        pressTimer = setTimeout(() => {
+            launchConfetti(1.2);
+            markEgg('longpress');
+        }, 2000);
+    };
+    const cancelPress = () => clearTimeout(pressTimer);
+    backTopBtn.addEventListener('mousedown', startPress);
+    backTopBtn.addEventListener('mouseup', cancelPress);
+    backTopBtn.addEventListener('mouseleave', cancelPress);
+    backTopBtn.addEventListener('touchstart', startPress);
+    backTopBtn.addEventListener('touchend', cancelPress);
+}
 
 const aboutCard = document.querySelector('.about-card');
 if (aboutCard) {
