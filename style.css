@@ -739,16 +739,66 @@ a {
 .hero-tech span {
     font-family: var(--font-mono);
     font-size: 0.78rem;
-    color: var(--text-dim);
-    padding: 5px 14px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 10px;
     transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border);
+}
+
+.hero-tech span::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-glow), rgba(34, 211, 238, 0.1));
+    opacity: 0;
+    transition: opacity var(--transition);
 }
 
 .hero-tech span:hover {
-    border-color: var(--accent);
+    border-color: transparent;
     color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px var(--accent-glow);
+}
+
+.hero-tech span:hover::before {
+    opacity: 1;
+}
+
+.hero-tech span:nth-child(1) { border-top: 2px solid var(--accent); }
+.hero-tech span:nth-child(2) { border-top: 2px solid var(--cyan); }
+.hero-tech span:nth-child(3) { border-top: 2px solid var(--green); }
+.hero-tech span:nth-child(4) { border-top: 2px solid #f59e0b; }
+.hero-tech span:nth-child(5) { border-top: 2px solid #f472b6; }
+
+.float-dots {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.f-dot {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: float-y 10s ease-in-out infinite;
+}
+
+.f-1 { width: 14px; height: 14px; left: 10%; top: 30%; background: var(--accent); animation-delay: -1s; }
+.f-2 { width: 10px; height: 10px; left: 82%; top: 20%; background: var(--cyan); animation-delay: -3s; }
+.f-3 { width: 8px;  height: 8px;  left: 20%; top: 70%; background: var(--green); animation-delay: -5s; }
+.f-4 { width: 16px; height: 16px; left: 90%; top: 60%; background: var(--accent-light); animation-delay: -2s; }
+.f-5 { width: 6px;  height: 6px;  left: 45%; top: 18%; background: #f472b6; animation-delay: -7s; }
+.f-6 { width: 12px; height: 12px; left: 65%; top: 78%; background: var(--cyan); animation-delay: -4s; }
+
+@keyframes float-y {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(180deg); }
 }
 
 .scroll-indicator {
@@ -1087,6 +1137,24 @@ a {
     align-items: center;
     justify-content: center;
     color: var(--accent);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.project-card:hover .project-icon {
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    color: #fff;
+    transform: scale(1.08) rotate(-6deg);
+    box-shadow: 0 8px 20px var(--accent-glow-strong);
+}
+
+.project-icon svg {
+    transition: transform 0.4s ease;
+}
+
+.project-card:hover .project-icon svg {
+    transform: rotate(6deg);
 }
 
 .project-info h3 {
@@ -1250,6 +1318,20 @@ a {
     justify-content: center;
     color: var(--accent);
     flex-shrink: 0;
+    transition: all var(--transition);
+}
+
+.contact-card:hover .contact-icon {
+    background: linear-gradient(135deg, var(--accent), var(--cyan));
+    color: #fff;
+    animation: wobble 0.6s ease-out;
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-8deg); }
+    50% { transform: rotate(8deg); }
+    75% { transform: rotate(-4deg); }
 }
 
 .contact-text h4 {

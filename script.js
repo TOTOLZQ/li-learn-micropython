@@ -228,7 +228,8 @@ const eggCountEl = document.getElementById('eggCount');
 const mouseTrail = document.getElementById('mouseTrail');
 
 const foundEggs = new Set();
-const TOTAL_EGGS = 6;
+const TOTAL_EGGS = 9;
+eggCountEl.nextElementSibling.textContent = '/9';
 
 function markEgg(id) {
     if (foundEggs.has(id)) return;
@@ -552,6 +553,57 @@ if (backTopBtn) {
     backTopBtn.addEventListener('touchstart', startPress);
     backTopBtn.addEventListener('touchend', cancelPress);
 }
+
+if (window.DeviceMotionEvent) {
+    let lastShake = 0;
+    let shakeCount = 0;
+    window.addEventListener('devicemotion', (e) => {
+        const a = e.accelerationIncludingGravity;
+        if (!a) return;
+        const mag = Math.sqrt((a.x || 0) ** 2 + (a.y || 0) ** 2 + (a.z || 0) ** 2);
+        if (mag > 22) {
+            const now = Date.now();
+            if (now - lastShake < 300) return;
+            lastShake = now;
+            shakeCount++;
+            if (shakeCount >= 3) {
+                markEgg('shake');
+                launchConfetti(1.2);
+                shakeCount = 0;
+            }
+        }
+    });
+}
+
+let lastOri = window.orientation || 0;
+window.addEventListener('orientationchange', () => {
+    const cur = window.orientation || 0;
+    if (lastOri === 0 && Math.abs(cur) === 90) {
+        markEgg('rotate');
+        launchConfetti(0.8);
+    }
+    lastOri = cur;
+});
+
+let scrollUpStreak = 0;
+let lastScrollDir = 0;
+let lastScrollY = window.scrollY;
+window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    const dir = y < lastScrollY ? -1 : (y > lastScrollY ? 1 : 0);
+    if (dir === -1 && lastScrollDir !== -1) {
+        scrollUpStreak++;
+        if (scrollUpStreak >= 3) {
+            markEgg('scroll');
+            launchConfetti(0.8);
+            scrollUpStreak = 0;
+        }
+    } else if (dir === 1) {
+        scrollUpStreak = 0;
+    }
+    lastScrollDir = dir;
+    lastScrollY = y;
+});
 
 const aboutCard = document.querySelector('.about-card');
 if (aboutCard) {
