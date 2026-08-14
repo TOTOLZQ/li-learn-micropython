@@ -259,14 +259,15 @@ function runRain() {
 
     function draw() {
         if (!running) return;
-        ctx.fillStyle = 'rgba(245, 245, 250, 0.08)';
+        ctx.fillStyle = 'rgba(15, 21, 48, 0.12)';
         ctx.fillRect(0, 0, welcomeRain.width, welcomeRain.height);
         ctx.font = fontSize + 'px JetBrains Mono, monospace';
         for (let i = 0; i < drops.length; i++) {
             const text = chars.charAt(Math.floor(Math.random() * chars.length));
             const x = i * fontSize;
             const y = drops[i];
-            ctx.fillStyle = Math.random() > 0.97 ? '#22d3ee' : 'rgba(124, 92, 252, 0.6)';
+            ctx.fillStyle = Math.random() > 0.97 ? '#22d3ee' : 'rgba(167, 139, 250, 0.85)';
+            if (Math.random() > 0.985) ctx.fillStyle = '#ffffff';
             ctx.fillText(text, x, y);
             if (y > welcomeRain.height && Math.random() > 0.975) drops[i] = 0;
             drops[i] += fontSize;
