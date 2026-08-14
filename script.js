@@ -1,5 +1,7 @@
 const i18n = {
     en: {
+        'welcome.text': 'Welcome to my corner of the internet',
+        'welcome.enter': 'Enter',
         'nav.about': 'About',
         'nav.projects': 'Projects',
         'nav.timeline': 'Timeline',
@@ -43,6 +45,8 @@ const i18n = {
         'footer.backTop': 'Back to top \u2191'
     },
     cn: {
+        'welcome.text': '欢迎来到我的互联网小角落',
+        'welcome.enter': '进入',
         'nav.about': '关于',
         'nav.projects': '项目',
         'nav.timeline': '版本历程',
@@ -86,6 +90,8 @@ const i18n = {
         'footer.backTop': '返回顶部 \u2191'
     },
     jp: {
+        'welcome.text': '私のインターネットの片隅へようこそ',
+        'welcome.enter': '入る',
         'nav.about': '自己紹介',
         'nav.projects': 'プロジェクト',
         'nav.timeline': 'バージョン',
@@ -204,6 +210,16 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.section-header, .about-text, .about-visual, .project-card, .timeline-item, .contact-card, .contact-intro, .project-filter').forEach(el => {
     el.classList.add('fade-in');
     observer.observe(el);
+});
+
+const welcomeScreen = document.getElementById('welcomeScreen');
+const welcomeEnter = document.getElementById('welcomeEnter');
+
+welcomeEnter.addEventListener('click', () => {
+    welcomeScreen.classList.add('hidden');
+    setTimeout(() => {
+        welcomeScreen.style.display = 'none';
+    }, 800);
 });
 
 applyI18n(currentLang);
