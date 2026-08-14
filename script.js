@@ -40,7 +40,6 @@ const i18n = {
         'contact.intro': 'Always open to new ideas, collaborations, and friendly chats. Feel free to reach out!',
         'contact.wechat': 'WeChat',
         'contact.rednote': 'RedNote',
-        'contact.rednoteDesc': 'See AnswerBook repo',
         'footer.backTop': 'Back to top \u2191'
     },
     cn: {
@@ -84,7 +83,6 @@ const i18n = {
         'contact.intro': '始终欢迎新想法、合作和友好交流。随时联系！',
         'contact.wechat': '微信',
         'contact.rednote': '小红书',
-        'contact.rednoteDesc': '见 AnswerBook 仓库',
         'footer.backTop': '返回顶部 \u2191'
     },
     jp: {
@@ -128,7 +126,6 @@ const i18n = {
         'contact.intro': '新しいアイデア、コラボ、フレンドリーなチャットを歓迎します。お気軽にどうぞ！',
         'contact.wechat': 'WeChat',
         'contact.rednote': 'RedNote',
-        'contact.rednoteDesc': 'AnswerBookリポジトリを参照',
         'footer.backTop': 'トップに戻る \u2191'
     }
 };
