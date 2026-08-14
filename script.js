@@ -2,7 +2,7 @@ const i18n = {
     en: {
         'welcome.text': 'Welcome to my corner of the internet',
         'welcome.enter': 'Enter',
-        'welcome.hint': 'Hint: try ↑ ↑ ↓ ↓',
+        'welcome.hint': 'Hint: try typing "li"',
         'egg.collected': 'Eggs',
         'nav.about': 'About',
         'nav.projects': 'Projects',
@@ -49,7 +49,7 @@ const i18n = {
     cn: {
         'welcome.text': '欢迎来到我的互联网小角落',
         'welcome.enter': '进入',
-        'welcome.hint': '提示：试试 ↑ ↑ ↓ ↓',
+        'welcome.hint': '提示：试试打字 "li"',
         'egg.collected': '彩蛋',
         'nav.about': '关于',
         'nav.projects': '项目',
@@ -96,7 +96,7 @@ const i18n = {
     jp: {
         'welcome.text': '私のインターネットの片隅へようこそ',
         'welcome.enter': '入る',
-        'welcome.hint': 'ヒント：↑ ↑ ↓ ↓ を試して',
+        'welcome.hint': 'ヒント："li" と打ってみて',
         'egg.collected': 'エッグ',
         'nav.about': '自己紹介',
         'nav.projects': 'プロジェクト',
@@ -228,8 +228,8 @@ const eggCountEl = document.getElementById('eggCount');
 const mouseTrail = document.getElementById('mouseTrail');
 
 const foundEggs = new Set();
-const TOTAL_EGGS = 6;
-eggCountEl.nextElementSibling.textContent = '/6';
+const TOTAL_EGGS = 3;
+eggCountEl.nextElementSibling.textContent = '/3';
 
 function markEgg(id) {
     if (foundEggs.has(id)) return;
@@ -303,7 +303,6 @@ runRain();
 welcomeEnter.addEventListener('click', () => {
     if (enterBtn.classList.contains('disabled')) return;
     welcomeScreen.classList.add('hidden');
-    markEgg('enter');
     setTimeout(() => {
         welcomeScreen.style.display = 'none';
     }, 800);
@@ -460,32 +459,13 @@ function tickConfetti() {
     }
 }
 
-const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown'];
-let konamiIdx = 0;
-let lastKonamiTime = 0;
-document.addEventListener('keydown', (e) => {
-    const now = Date.now();
-    if (now - lastKonamiTime > 2000) konamiIdx = 0;
-    lastKonamiTime = now;
-    const key = e.key;
-    if (key === konami[konamiIdx]) {
-        konamiIdx++;
-        if (konamiIdx === konami.length) {
-            launchConfetti(1.5);
-            markEgg('konami');
-            konamiIdx = 0;
-        }
-    } else {
-        konamiIdx = (key === konami[0]) ? 1 : 0;
-    }
-});
-
 const typeBuffer = [];
 document.addEventListener('keydown', (e) => {
     if (e.key.length !== 1) return;
     typeBuffer.push(e.key.toLowerCase());
     if (typeBuffer.length > 3) typeBuffer.shift();
     if (typeBuffer.join('') === 'li') {
+        markEgg('type-li');
         launchConfetti(0.6);
         typeBuffer.length = 0;
     }
@@ -520,23 +500,6 @@ navLogo.addEventListener('click', (e) => {
     }, 1200);
 });
 
-const backTopBtn = document.querySelector('.back-top');
-let pressTimer = null;
-if (backTopBtn) {
-    const startPress = () => {
-        pressTimer = setTimeout(() => {
-            launchConfetti(1.2);
-            markEgg('longpress');
-        }, 2000);
-    };
-    const cancelPress = () => clearTimeout(pressTimer);
-    backTopBtn.addEventListener('mousedown', startPress);
-    backTopBtn.addEventListener('mouseup', cancelPress);
-    backTopBtn.addEventListener('mouseleave', cancelPress);
-    backTopBtn.addEventListener('touchstart', startPress);
-    backTopBtn.addEventListener('touchend', cancelPress);
-}
-
 if (window.DeviceMotionEvent) {
     let lastShake = 0;
     let shakeCount = 0;
@@ -558,34 +521,6 @@ if (window.DeviceMotionEvent) {
     });
 }
 
-let lastOri = window.orientation || 0;
-window.addEventListener('orientationchange', () => {
-    const cur = window.orientation || 0;
-    if (lastOri === 0 && Math.abs(cur) === 90) {
-        markEgg('rotate');
-        launchConfetti(0.8);
-    }
-    lastOri = cur;
-});
-
-let scrollUpStreak = 0;
-let lastScrollDir = 0;
-let lastScrollY = window.scrollY;
-window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    const dir = y < lastScrollY ? -1 : (y > lastScrollY ? 1 : 0);
-    if (dir === -1 && lastScrollDir !== -1) {
-        scrollUpStreak++;
-        if (scrollUpStreak >= 3) {
-            launchConfetti(0.8);
-            scrollUpStreak = 0;
-        }
-    } else if (dir === 1) {
-        scrollUpStreak = 0;
-    }
-    lastScrollDir = dir;
-    lastScrollY = y;
-});
 
 const aboutCard = document.querySelector('.about-card');
 if (aboutCard) {
