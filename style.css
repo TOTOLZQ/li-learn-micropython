@@ -3093,6 +3093,107 @@ a {
 }
 .otp-btn:disabled { cursor: not-allowed; opacity: 0.6; }
 
+.vk-trigger {
+    flex-shrink: 0;
+    padding: 9px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-mute);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+.vk-trigger:hover {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.08);
+    color: #6366f1;
+}
+
+.vk-modal { z-index: 10010; }
+.vk-card {
+    max-width: 420px;
+    width: 90vw;
+    padding: 24px;
+    border-radius: 20px;
+}
+.vk-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+    color: var(--text);
+}
+.vk-display {
+    font-family: JetBrains Mono, monospace;
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    text-align: center;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--glass-border);
+    min-height: 48px;
+    color: var(--text);
+    word-break: break-all;
+}
+.vk-keys {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 6px;
+    margin-bottom: 16px;
+}
+.vk-key {
+    aspect-ratio: 1;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: JetBrains Mono, monospace;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s ease;
+    user-select: none;
+}
+.vk-key:hover {
+    border-color: rgba(99, 102, 241, 0.5);
+    background: rgba(99, 102, 241, 0.12);
+    color: #6366f1;
+    transform: translateY(-1px);
+}
+.vk-key:active {
+    transform: scale(0.92);
+    background: rgba(99, 102, 241, 0.2);
+}
+.vk-key.vk-shift-active {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.6);
+    color: #6366f1;
+}
+.vk-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+.vk-actions .btn { flex: 1; justify-content: center; }
+
+.auth-turnstile-wrap {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    min-height: 65px;
+}
+.auth-turnstile-wrap > div {
+    min-height: 65px;
+}
+
 .admin-safe {
     display: flex;
     align-items: center;
