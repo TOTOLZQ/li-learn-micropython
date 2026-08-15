@@ -880,7 +880,7 @@ function sha256Hex(s) {
     const ml = c.length * 8;
     const w = new Uint32Array(64);
     const bs = (c.length + 72) & ~63;
-    const buf = new Uint8Array(bs + 64);
+    const buf = new Uint8Array(bs);
     buf.set(c, 0);
     buf[c.length] = 0x80;
     let hv = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
@@ -894,7 +894,7 @@ function sha256Hex(s) {
             const s1 = (((t2>>>17)|(t2<<15)) >>> 0) ^ (((t2>>>19)|(t2<<13)) >>> 0) ^ (t2>>>10);
             w[i] = ((w[i-16] + s0 + w[i-7] + s1) | 0);
         }
-        let [a,b,cd,d,e,f,g,h] = hv;
+        let a=hv[0],b=hv[1],cd=hv[2],d=hv[3],e=hv[4],f=hv[5],g=hv[6],h=hv[7];
         for (let i = 0; i < 64; i++) {
             const S1 = (((e>>>6)|(e<<26)) >>> 0) ^ (((e>>>11)|(e<<21)) >>> 0) ^ (((e>>>25)|(e<<7)) >>> 0);
             const ch = (e & f) ^ ((~e) & g);
