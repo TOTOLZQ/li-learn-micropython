@@ -26,6 +26,16 @@ const i18n = {
         'auth.goRegister': 'Create one',
         'auth.goSignin': 'Sign in',
         'auth.altOr': 'Or use admin access',
+        'auth.code': 'Code',
+        'auth.sendCode': 'Send code',
+        'auth.signinGo': 'Sign in',
+        'auth.registerGo': 'Create account',
+        'auth.adminGo': 'Enter dashboard',
+        'auth.captchaFail': 'Please complete the human verification.',
+        'vk.title': 'Virtual Keyboard',
+        'vk.clear': 'Clear',
+        'vk.backspace': 'Delete',
+        'vk.done': 'Done',
         'admin.title': 'Admin dashboard',
         'admin.online': 'Online now',
         'admin.visits': 'Total visits',
@@ -105,6 +115,16 @@ const i18n = {
         'auth.goRegister': '去注册',
         'auth.goSignin': '去登录',
         'auth.altOr': '或者使用管理员登录',
+        'auth.code': '验证码',
+        'auth.sendCode': '发送验证码',
+        'auth.signinGo': '登录',
+        'auth.registerGo': '创建账户',
+        'auth.adminGo': '进入后台',
+        'auth.captchaFail': '请完成人机验证。',
+        'vk.title': '虚拟键盘',
+        'vk.clear': '清空',
+        'vk.backspace': '删除',
+        'vk.done': '完成',
         'admin.title': '管理员后台',
         'admin.online': '在线人数',
         'admin.visits': '总访问量',
@@ -184,6 +204,16 @@ const i18n = {
         'auth.goRegister': '新規登録',
         'auth.goSignin': 'ログイン',
         'auth.altOr': '管理者としてログイン',
+        'auth.code': 'コード',
+        'auth.sendCode': 'コード送信',
+        'auth.signinGo': 'ログイン',
+        'auth.registerGo': 'アカウント作成',
+        'auth.adminGo': '管理画面へ',
+        'auth.captchaFail': 'ロボット確認を完了してください。',
+        'vk.title': '仮想キーボード',
+        'vk.clear': 'クリア',
+        'vk.backspace': '削除',
+        'vk.done': '完了',
         'admin.title': '管理ダッシュボード',
         'admin.online': 'オンライン',
         'admin.visits': '合計訪問',
@@ -835,7 +865,12 @@ const navAuth = {
     resendIn: { en: 'Resend in ', cn: '秒后重发 ', jp: ' 秒後に再送 ' },
     seconds: { en: 's', cn: '秒', jp: '秒' },
     emailNotConf: { en: 'EmailJS not configured yet — using local demo code ', cn: '尚未配置 EmailJS，使用本地演示验证码 ', jp: 'EmailJS未設定、ローカルデモコード ' },
-    passwordHint: { en: 'User password (encrypted)', cn: '用户密码（加密存储）', jp: 'ユーザーパスワード（暗号化保存）' }
+    passwordHint: { en: 'User password (encrypted)', cn: '用户密码（加密存储）', jp: 'ユーザーパスワード（暗号化保存）' },
+    vkTitle: { en: 'Virtual Keyboard', cn: '虚拟键盘', jp: '仮想キーボード' },
+    vkClear: { en: 'Clear', cn: '清空', jp: 'クリア' },
+    vkBackspace: { en: 'Delete', cn: '删除', jp: '削除' },
+    vkDone: { en: 'Done', cn: '完成', jp: '完了' },
+    captchaFail: { en: 'Please complete the human verification.', cn: '请完成人机验证。', jp: 'ロボット確認を完了してください。' }
 };
 
 const EMAILJS = {
@@ -1279,25 +1314,7 @@ function hashPass(s) {
     return 'fh1_' + (h >>> 0).toString(16).padStart(8, '0');
 }
 
-if (!('EMAIL_JS' in window)) {
-    window.EMAIL_JS = { publicKey: EMAILJS.publicKey, serviceId: EMAILJS.serviceId, templateId: EMAILJS.templateId };
-}
-
 const otpStore = { codes: {} };
-function genCode() { return String(Math.floor(100000 + Math.random() * 900000)); }
-async function emailSendCode(email, code, mode) {
-    if (EMAILJS.publicKey && EMAILJS.serviceId && EMAILJS.templateId && typeof window !== 'undefined' && window.emailjs) {
-        try {
-            await window.emailjs.send(EMAILJS.serviceId, EMAILJS.templateId, {
-                to_email: email,
-                verify_code: code,
-                mode: mode || 'verify'
-            }, { publicKey: EMAILJS.publicKey });
-            return true;
-        } catch (e) { return false; }
-    }
-    return 'demo';
-}
 async function sendOtp(mode) {
     let email = '';
     if (mode === 'register') {
@@ -1373,6 +1390,99 @@ document.addEventListener('click', (e) => {
     const mode = btn.getAttribute('data-otp');
     sendOtp(mode);
 });
+
+const TURNSTILE_SITEKEY = '';
+const vkState = { target: null, val: '', shift: false };
+const VK_ROWS = [
+    ['1','2','3','4','5','6','7','8','9','0'],
+    ['q','w','e','r','t','y','u','i','o','p'],
+    ['a','s','d','f','g','h','j','k','l',';'],
+    ['z','x','c','v','b','n','m',',','.','/']
+];
+function vkBuildKeys() {
+    const wrap = document.getElementById('vkKeys');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    const shiftRow = document.createElement('div');
+    shiftRow.style.cssText = 'grid-column:1/-1;display:flex;gap:6px;margin-bottom:6px;';
+    const shiftBtn = document.createElement('button');
+    shiftBtn.type = 'button';
+    shiftBtn.className = 'vk-key';
+    shiftBtn.style.cssText = 'aspect-ratio:auto;flex:1;padding:10px;font-size:0.78rem;';
+    shiftBtn.textContent = 'Shift';
+    shiftBtn.addEventListener('click', () => {
+        vkState.shift = !vkState.shift;
+        shiftBtn.classList.toggle('vk-shift-active', vkState.shift);
+        vkBuildKeys();
+    });
+    if (vkState.shift) shiftBtn.classList.add('vk-shift-active');
+    shiftRow.appendChild(shiftBtn);
+    wrap.appendChild(shiftRow);
+    VK_ROWS.forEach(row => {
+        row.forEach(ch => {
+            const k = document.createElement('button');
+            k.type = 'button';
+            k.className = 'vk-key';
+            k.textContent = vkState.shift ? ch.toUpperCase() : ch;
+            k.addEventListener('click', () => {
+                vkState.val += vkState.shift ? ch.toUpperCase() : ch;
+                vkState.shift = false;
+                vkUpdateDisplay();
+                vkBuildKeys();
+            });
+            wrap.appendChild(k);
+        });
+    });
+}
+function vkUpdateDisplay() {
+    const d = document.getElementById('vkDisplay');
+    if (d) d.textContent = '\u2022'.repeat(vkState.val.length);
+}
+function vkOpen(target) {
+    vkState.target = target;
+    vkState.val = '';
+    vkState.shift = false;
+    const inp = document.querySelector('[data-vk-target="' + target + '"]');
+    if (inp) vkState.val = inp.value || '';
+    vkUpdateDisplay();
+    vkBuildKeys();
+    openModal('vkModal');
+}
+function vkClose() {
+    if (vkState.target) {
+        const inp = document.querySelector('[data-vk-target="' + vkState.target + '"]');
+        if (inp) inp.value = vkState.val;
+    }
+    closeModal('vkModal');
+}
+function vkBackspace() {
+    vkState.val = vkState.val.slice(0, -1);
+    vkUpdateDisplay();
+}
+function vkClear() {
+    vkState.val = '';
+    vkUpdateDisplay();
+}
+document.addEventListener('click', (e) => {
+    const trig = e.target.closest && e.target.closest('[data-vk]');
+    if (trig) {
+        e.preventDefault();
+        vkOpen(trig.getAttribute('data-vk'));
+        return;
+    }
+    if (e.target.closest && e.target.closest('.vk-btn-clear')) { vkClear(); return; }
+    if (e.target.closest && e.target.closest('.vk-btn-back')) { vkBackspace(); return; }
+    if (e.target.closest && e.target.closest('.vk-btn-done')) { vkClose(); return; }
+});
+
+function getTurnstileToken() {
+    if (!TURNSTILE_SITEKEY) return 'skip';
+    const w = document.querySelector('.cf-turnstile');
+    if (w && typeof window !== 'undefined' && window.turnstile) {
+        try { return window.turnstile.getResponse() || ''; } catch(e) { return ''; }
+    }
+    return 'skip';
+}
 
 function findUser(username) {
     const users = dbCache.users || [];
@@ -1552,6 +1662,8 @@ document.querySelectorAll('[data-auth-form="register"]').forEach(form => {
         if (password.length < 4) return setAuthError('register', tstr('passShort'));
         if (password !== confirm) return setAuthError('register', tstr('confirmMismatch'));
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setAuthError('register', tstr('emailInvalid'));
+        const tsTok = getTurnstileToken();
+        if (tsTok === '' || tsTok === 'fail') return setAuthError('register', tstr('captchaFail'));
         if (!verifyOtp(email, code, 'register')) return setAuthError('register', tstr('codeBad'));
         if (findUser(username)) return setAuthError('register', tstr('userExists'));
         const users0 = dbCache.users || [];
@@ -1588,6 +1700,8 @@ document.querySelectorAll('[data-auth-form="signin"]').forEach(form => {
         const code = (data.code || '').trim();
         setAuthError('signin', '');
         if (!username || !password || !code) return setAuthError('signin', tstr('required'));
+        const tsTok = getTurnstileToken();
+        if (tsTok === '' || tsTok === 'fail') return setAuthError('signin', tstr('captchaFail'));
         const user = findUser(username);
         let match = false;
         if (user) {
@@ -1612,6 +1726,8 @@ document.querySelectorAll('[data-auth-form="admin"]').forEach(form => {
         const pw = data.adminPass || '';
         setAuthError('admin', '');
         if (!pw) return setAuthError('admin', tstr('required'));
+        const tsTok = getTurnstileToken();
+        if (tsTok === '' || tsTok === 'fail') return setAuthError('admin', tstr('captchaFail'));
         let stored = dbCache.adminPass || DEFAULT_ADMIN_PASS;
         if (stored && !stored.startsWith('s2_')) stored = adminHash(stored);
         const match = adminHash(pw) === stored;
