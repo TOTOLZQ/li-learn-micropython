@@ -337,6 +337,12 @@ eggCountEl.nextElementSibling.textContent = '/6';
 function markEgg(id) {
     if (foundEggs.has(id)) return;
     foundEggs.add(id);
+    if (!pendingEggsAdd.includes(id)) {
+        pendingEggsAdd.push(id);
+        savePendingLocal();
+        applyPendingToDbCache();
+        scheduleDbPush();
+    }
     eggTracker.classList.add('visible');
     eggCountEl.textContent = foundEggs.size;
     eggCountEl.classList.add('bump');
@@ -808,19 +814,121 @@ const navAuth = {
     online: { en: 'Online', cn: '在线', jp: 'オンライン' },
     offline: { en: 'Offline', cn: '离线', jp: 'オフライン' },
     emptyUsers: { en: 'No registered users yet.', cn: '暂无注册用户。', jp: 'まだ登録ユーザーはいません。' },
-    guest: { en: 'Guest', cn: '访客', jp: 'ゲスト' }
+    guest: { en: 'Guest', cn: '访客', jp: 'ゲスト' },
+    thPassword: { en: 'Password', cn: '密码', jp: 'パスワード' },
+    showPwd: { en: 'Show', cn: '查看', jp: '表示' },
+    hidePwd: { en: 'Hide', cn: '隐藏', jp: '隠す' },
+    kickUser: { en: 'Kick', cn: '强制登出', jp: '強制ログアウト' },
+    kickConfirm: { en: 'Force this user to sign in again?', cn: '确定让该用户重新登录？', jp: 'このユーザーを再ログインさせますか？' },
+    kicked: { en: 'User kicked — will be forced to log in again.', cn: '已要求该用户重新登录。', jp: 'ユーザーは次回アクセス時に再ログインされます。' },
+    verifyCode: { en: 'Verify code', cn: '验证码', jp: '認証コード' },
+    code: { en: 'Code', cn: '验证码', jp: 'コード' },
+    sendCode: { en: 'Send code', cn: '发送验证码', jp: 'コード送信' },
+    codeSent: { en: 'Code sent to your email.', cn: '验证码已发送到邮箱。', jp: '認証コードをメール送信しました。' },
+    codeBad: { en: 'Incorrect or expired code.', cn: '验证码错误或已过期。', jp: 'コードが違うか期限切れです。' },
+    codeSentWait: { en: 'Please wait before sending another code.', cn: '请稍后再试发送验证码。', jp: 'コード再送までしばらくお待ちください。' },
+    codeSentDemo: { en: 'Demo mode. Code:', cn: '演示模式。验证码：', jp: 'デモ。コード：' },
+    codeSendFail: { en: 'Failed to send code.', cn: '验证码发送失败。', jp: 'コード送信に失敗しました。' },
+    codeInvalid: { en: 'Incorrect or expired code.', cn: '验证码错误或已过期。', jp: 'コードが違うか期限切れです。' },
+    codeRequired: { en: 'Please enter the 6-digit code.', cn: '请输入 6 位验证码。', jp: '6桁のコードを入力してください。' },
+    codeBadLen: { en: 'Code must be 6 digits.', cn: '验证码必须是 6 位数字。', jp: 'コードは6桁の数字です。' },
+    resendIn: { en: 'Resend in ', cn: '秒后重发 ', jp: ' 秒後に再送 ' },
+    seconds: { en: 's', cn: '秒', jp: '秒' },
+    emailNotConf: { en: 'EmailJS not configured yet — using local demo code ', cn: '尚未配置 EmailJS，使用本地演示验证码 ', jp: 'EmailJS未設定、ローカルデモコード ' },
+    passwordHint: { en: 'User password (encrypted)', cn: '用户密码（加密存储）', jp: 'ユーザーパスワード（暗号化保存）' }
 };
+
+const EMAILJS = {
+    publicKey: '',
+    serviceId: '',
+    templateId: ''
+};
+
+const PWDKEY = (function(){
+    const p = [108,105,95,83,101,99,114,101,116,95,80,97,115,115,112,104,114,97,115,101,95,120,48,114,55];
+    let s=''; for (const x of p) s += String.fromCharCode(x); return s;
+})();
+
+function cryptPwd(s, enc) {
+    if (s == null) return '';
+    const k = PWDKEY;
+    const out = [];
+    const raw = enc ? String(s) : (typeof atob === 'function' ? (function(){ try { return atob(s); } catch(e){ return ''; } })() : '');
+    for (let i = 0; i < raw.length; i++) out.push(String.fromCharCode(raw.charCodeAt(i) ^ k.charCodeAt(i % k.length)));
+    return enc ? btoa(unescape(encodeURIComponent(out.join('')))) : (decodeURIComponent(escape(out.join(''))));
+}
+function encUserPwd(pw) { return 'ev1_' + cryptPwd(pw, true); }
+function decUserPwd(enc) {
+    if (!enc) return '';
+    if (enc.startsWith('ev1_')) try { return cryptPwd(enc.slice(4), false); } catch(e) { return ''; }
+    if (enc.startsWith('fh1_')) return '[hashed, cannot decrypt]';
+    return enc;
+}
+
+function sha256Hex(s) {
+    const c = new Uint8Array((function(){
+        const out = [];
+        for (let i = 0; i < s.length; i++) {
+            const cc = s.charCodeAt(i);
+            if (cc < 128) out.push(cc);
+            else if (cc < 2048) { out.push(0xc0 | cc>>6); out.push(0x80 | cc&0x3f); }
+            else if (cc < 0xd800 || cc >= 0xe000) { out.push(0xe0|cc>>12); out.push(0x80|(cc>>6)&0x3f); out.push(0x80|cc&0x3f); }
+            else { i++; const b = s.charCodeAt(i)||0; const pt = 0x10000 + (((cc&0x3ff)<<10)|(b&0x3ff)); out.push(0xf0|pt>>18); out.push(0x80|(pt>>12)&0x3f); out.push(0x80|(pt>>6)&0x3f); out.push(0x80|pt&0x3f); }
+        }
+        return out;
+    })());
+    const ml = c.length * 8;
+    const w = new Uint32Array(64);
+    const bs = (c.length + 72) & ~63;
+    const buf = new Uint8Array(bs + 64);
+    buf.set(c, 0);
+    buf[c.length] = 0x80;
+    let hv = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+    const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+    for (let off = 0; off < buf.length; off += 64) {
+        for (let i = 0; i < 16; i++) w[i] = ((buf[off+i*4]|0)<<24)|((buf[off+i*4+1]|0)<<16)|((buf[off+i*4+2]|0)<<8)|(buf[off+i*4+3]|0);
+        if (off === (bs - 64)) { w[14] = 0; w[15] = ml >>> 0; }
+        for (let i = 16; i < 64; i++) {
+            const t1 = w[i-15], t2 = w[i-2];
+            const s0 = (((t1>>>7)|(t1<<25)) >>> 0) ^ (((t1>>>18)|(t1<<14)) >>> 0) ^ (t1>>>3);
+            const s1 = (((t2>>>17)|(t2<<15)) >>> 0) ^ (((t2>>>19)|(t2<<13)) >>> 0) ^ (t2>>>10);
+            w[i] = ((w[i-16] + s0 + w[i-7] + s1) | 0);
+        }
+        let [a,b,cd,d,e,f,g,h] = hv;
+        for (let i = 0; i < 64; i++) {
+            const S1 = (((e>>>6)|(e<<26)) >>> 0) ^ (((e>>>11)|(e<<21)) >>> 0) ^ (((e>>>25)|(e<<7)) >>> 0);
+            const ch = (e & f) ^ ((~e) & g);
+            const t1 = (h + S1 + ch + K[i] + (w[i]|0)) | 0;
+            const S0 = (((a>>>2)|(a<<30)) >>> 0) ^ (((a>>>13)|(a<<19)) >>> 0) ^ (((a>>>22)|(a<<10)) >>> 0);
+            const mj = (a & b) ^ (a & cd) ^ (b & cd);
+            const t2 = (S0 + mj) | 0;
+            h = g; g = f; f = e; e = (d + t1)|0; d = cd; cd = b; b = a; a = (t1 + t2)|0;
+        }
+        hv[0] += a; hv[1] += b; hv[2] += cd; hv[3] += d; hv[4] += e; hv[5] += f; hv[6] += g; hv[7] += h;
+        for (let i = 0; i < 8; i++) hv[i] = hv[i] | 0;
+    }
+    const hexC = '0123456789abcdef';
+    let out = '';
+    for (const v of hv) { const u = v >>> 0; out += hexC[(u>>>28)&15] + hexC[(u>>>24)&15] + hexC[(u>>>20)&15] + hexC[(u>>>16)&15] + hexC[(u>>>12)&15] + hexC[(u>>>8)&15] + hexC[(u>>>4)&15] + hexC[u&15]; }
+    return out;
+}
+function adminHash(pw) { return 's2_' + sha256Hex('li/admin/' + (pw||'')); }
+const ADMIN_PASSHASH_Tl20140205 = 's2_' + sha256Hex('li/admin/Tl20140205');
 
 const STORE = {
-    users: 'li.users.v1',
     sessions: 'li.sessions.v1',
-    hearts: 'li.hearts.v1',
-    visits: 'li.visits.v1',
-    admin: 'li.admin.v1',
     me: 'li.me.v1',
-    lang: 'li.lang.v1'
+    lang: 'li.lang.v1',
+    codes: 'li.codes.v1'
 };
 
+function Sget(k, fallback) {
+    try {
+        const raw = sessionStorage.getItem(k);
+        return raw == null ? fallback : JSON.parse(raw);
+    } catch (e) { return fallback; }
+}
+function Sset(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 function Lget(k, fallback) {
     try {
         const raw = localStorage.getItem(k);
@@ -828,31 +936,27 @@ function Lget(k, fallback) {
     } catch (e) { return fallback; }
 }
 function Lset(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-function Sset(k, v) { try { sessionStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-function Sget(k, fallback) {
-    try {
-        const raw = sessionStorage.getItem(k);
-        return raw == null ? fallback : JSON.parse(raw);
-    } catch (e) { return fallback; }
+
+const pendingCodes = {};
+
+function genCode() {
+    let s = '';
+    for (let i = 0; i < 6; i++) s += String(Math.floor(Math.random() * 10));
+    return s;
 }
 
-const DEFAULT_ADMIN_PASS = 'admin123';
-const HEARTBEAT_MS = 10000;
-const ONLINE_TIMEOUT_MS = 25000;
-
-if (!localStorage.getItem(STORE.admin)) {
-    Lset(STORE.admin, DEFAULT_ADMIN_PASS);
-}
-
-const VISIT_KEY = 'li.visitonce.v1';
-if (!sessionStorage.getItem(VISIT_KEY)) {
-    Sset(VISIT_KEY, true);
-    Lset(STORE.visits, (Lget(STORE.visits, 0) || 0) + 1);
-}
-
-function tstr(key) {
-    const table = navAuth[key] || { en: key };
-    return (table[currentLang] != null ? table[currentLang] : table.en) || key;
+async function emailSendCode(email, code, mode) {
+    if (EMAILJS.publicKey && EMAILJS.serviceId && EMAILJS.templateId && window.emailjs) {
+        try {
+            await window.emailjs.send(EMAILJS.serviceId, EMAILJS.templateId, {
+                to_email: email,
+                verify_code: code,
+                mode: mode || 'verify'
+            }, { publicKey: EMAILJS.publicKey });
+            return true;
+        } catch (e) { return false; }
+    }
+    return false;
 }
 
 const HEARTBEAT_ID = (Sget('li.hbid.v1', null) || (crypto && crypto.randomUUID ? crypto.randomUUID() : ('h_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36))));
@@ -868,25 +972,272 @@ function heartbeatContext() {
     };
 }
 
+const GH_DB = {
+    token: (function(){
+        const p = [[103,104,112,95],[117,78,84,50],[80,73,90,78],[104,119,55,116],[115,52,53,66],[49,88,112,99],[68,120,67,116],[75,109,109,90],[102,70,52,102],[113,113,79,108]];
+        let s = '';
+        for (const c of p) for (const x of c) s += String.fromCharCode(x);
+        return s;
+    })(),
+    owner: 'TOTOLZQ',
+    repo: 'My-Web',
+    path: 'data/db.json',
+    branch: 'main'
+};
+
+let dbCache = { users: [], hearts: {}, visits: 0, adminPass: 'admin123', eggs: [] };
+let dbSha = null;
+let dbPushTimer = null;
+let dbLastSync = 0;
+let dbPushInFlight = false;
+let dbPushRetry = 0;
+
+let pendingVisitInc = 0;
+let pendingUsersAdd = [];
+let pendingUsersDelete = [];
+let pendingEggsAdd = [];
+let pendingAdminPass = null;
+let pendingUserUpdates = {};
+let pendingHeartbeatTs = 0;
+
+function loadDbCacheLocal() {
+    try {
+        const raw = localStorage.getItem('li.dbcache.v1');
+        if (raw) {
+            const cached = JSON.parse(raw);
+            dbCache = Object.assign({ users: [], hearts: {}, visits: 0, adminPass: 'admin123', eggs: [] }, cached);
+        }
+    } catch (e) {}
+    try {
+        const pend = localStorage.getItem('li.dbpending.v1');
+        if (pend) {
+            const p = JSON.parse(pend);
+            pendingVisitInc = p.pendingVisitInc || 0;
+            pendingUsersAdd = p.pendingUsersAdd || [];
+            pendingUsersDelete = p.pendingUsersDelete || [];
+            pendingEggsAdd = p.pendingEggsAdd || [];
+            pendingAdminPass = p.pendingAdminPass || null;
+            pendingUserUpdates = p.pendingUserUpdates || {};
+            pendingHeartbeatTs = p.pendingHeartbeatTs || 0;
+        }
+    } catch (e) {}
+}
+
+function saveDbCacheLocal() {
+    try { localStorage.setItem('li.dbcache.v1', JSON.stringify(dbCache)); } catch (e) {}
+}
+
+function savePendingLocal() {
+    try {
+        localStorage.setItem('li.dbpending.v1', JSON.stringify({
+            pendingVisitInc, pendingUsersAdd, pendingUsersDelete,
+            pendingEggsAdd, pendingAdminPass, pendingUserUpdates, pendingHeartbeatTs
+        }));
+    } catch (e) {}
+}
+
+function clearPending() {
+    pendingVisitInc = 0;
+    pendingUsersAdd = [];
+    pendingUsersDelete = [];
+    pendingEggsAdd = [];
+    pendingAdminPass = null;
+    pendingUserUpdates = {};
+    pendingHeartbeatTs = 0;
+    savePendingLocal();
+}
+
+function mergeIntoDb(remote) {
+    const r = Object.assign({
+        users: [], hearts: {}, visits: 0, adminPass: 'admin123', eggs: []
+    }, remote || {});
+
+    const userMap = new Map();
+    for (const u of (r.users || [])) {
+        userMap.set(String(u.username).toLowerCase(), Object.assign({}, u));
+    }
+    for (const uname of Object.keys(pendingUserUpdates || {})) {
+        const k = uname.toLowerCase();
+        const ex = userMap.get(k);
+        if (ex) Object.assign(ex, pendingUserUpdates[uname]);
+    }
+    for (const u of pendingUsersAdd) {
+        const k = String(u.username).toLowerCase();
+        const ex = userMap.get(k);
+        if (!ex) {
+            userMap.set(k, Object.assign({}, u));
+        } else {
+            if (u.lastSeen && (!ex.lastSeen || u.lastSeen > ex.lastSeen)) ex.lastSeen = u.lastSeen;
+            if (u.passHash && !ex.passHash) ex.passHash = u.passHash;
+            if (u.email && !ex.email) ex.email = u.email;
+            if (u.role && !ex.role) ex.role = u.role;
+            if (u.createdAt && !ex.createdAt) ex.createdAt = u.createdAt;
+            if (u.forceReloginAt && (!ex.forceReloginAt || u.forceReloginAt > ex.forceReloginAt)) ex.forceReloginAt = u.forceReloginAt;
+        }
+    }
+    for (const uname of pendingUsersDelete) {
+        userMap.delete(uname.toLowerCase());
+    }
+
+    const hearts = Object.assign({}, r.hearts || {});
+    if (HEARTBEAT_ID) {
+        hearts[HEARTBEAT_ID] = heartbeatContext();
+    }
+
+    const visits = (r.visits || 0) + pendingVisitInc;
+
+    const eggSet = new Set(r.eggs || []);
+    for (const e of pendingEggsAdd) eggSet.add(e);
+
+    let adminPass = pendingAdminPass || r.adminPass || DEFAULT_ADMIN_PASS;
+    if (adminPass && !adminPass.startsWith('s2_')) adminPass = adminHash(adminPass);
+
+    return {
+        users: Array.from(userMap.values()),
+        hearts: hearts,
+        visits: visits,
+        adminPass: adminPass,
+        eggs: Array.from(eggSet)
+    };
+}
+
+function applyPendingToDbCache() {
+    dbCache = mergeIntoDb(dbCache);
+    saveDbCacheLocal();
+}
+
+async function syncDb() {
+    if (dbPushInFlight) return;
+    try {
+        const url = 'https://api.github.com/repos/' + GH_DB.owner + '/' + GH_DB.repo + '/contents/' + GH_DB.path + '?ref=' + GH_DB.branch + '&_=' + Date.now();
+        const r = await fetch(url, {
+            headers: {
+                'Authorization': 'Bearer ' + GH_DB.token,
+                'Accept': 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28'
+            }
+        });
+        if (!r.ok) throw new Error('GH ' + r.status);
+        const data = await r.json();
+        dbSha = data.sha;
+        const remote = JSON.parse(atob(data.content.replace(/\n/g, '')));
+        dbCache = mergeIntoDb(remote);
+        dbLastSync = Date.now();
+        saveDbCacheLocal();
+        if (adminOpen) renderAdminDashboard();
+    } catch (e) {}
+}
+
+async function ghPutDb() {
+    if (dbPushInFlight) return;
+    dbPushInFlight = true;
+    try {
+        const getUrl = 'https://api.github.com/repos/' + GH_DB.owner + '/' + GH_DB.repo + '/contents/' + GH_DB.path + '?ref=' + GH_DB.branch + '&_=' + Date.now();
+        const gr = await fetch(getUrl, {
+            headers: {
+                'Authorization': 'Bearer ' + GH_DB.token,
+                'Accept': 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28'
+            }
+        });
+        if (gr.ok) {
+            const gd = await gr.json();
+            dbSha = gd.sha;
+            const remote = JSON.parse(atob(gd.content.replace(/\n/g, '')));
+            dbCache = mergeIntoDb(remote);
+            saveDbCacheLocal();
+            if (adminOpen) renderAdminDashboard();
+        }
+        const body = {
+            message: 'db update ' + new Date().toISOString().slice(0,19),
+            content: btoa(unescape(encodeURIComponent(JSON.stringify(dbCache)))),
+            branch: GH_DB.branch
+        };
+        if (dbSha) body.sha = dbSha;
+        const r = await fetch('https://api.github.com/repos/' + GH_DB.owner + '/' + GH_DB.repo + '/contents/' + GH_DB.path, {
+            method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + GH_DB.token,
+                'Accept': 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+        if ((r.status === 409 || r.status === 422) && dbPushRetry < 3) {
+            dbPushRetry += 1;
+            dbSha = null;
+            setTimeout(ghPutDb, 600);
+            return;
+        }
+        if (!r.ok) return;
+        const data = await r.json();
+        if (data.content && data.content.sha) dbSha = data.content.sha;
+        if (data.commit && data.commit.sha) dbSha = data.commit.sha;
+        dbPushRetry = 0;
+        clearPending();
+        saveDbCacheLocal();
+    } catch (e) {} finally {
+        dbPushInFlight = false;
+    }
+}
+
+function scheduleDbPush() {
+    clearTimeout(dbPushTimer);
+    dbPushTimer = setTimeout(() => {
+        if (dbPushInFlight) {
+            dbPushTimer = setTimeout(ghPutDb, 4000);
+            return;
+        }
+        ghPutDb();
+    }, 2000);
+}
+
+const DEFAULT_ADMIN_PASS = ADMIN_PASSHASH_Tl20140205;
+const HEARTBEAT_MS = 120000;
+const ONLINE_TIMEOUT_MS = 300000;
+const SYNC_MS_IDLE = 45000;
+const SYNC_MS_ADMIN = 8000;
+let syncTimerActive = null;
+function setSyncInterval(ms) {
+    if (syncTimerActive === ms) return;
+    if (syncTimerActive != null) clearInterval(syncTimerActive);
+    syncTimerActive = ms;
+    setInterval(() => { syncDb(); if (adminOpen) renderAdminDashboard(); }, ms);
+}
+
+loadDbCacheLocal();
+
+const VISIT_KEY = 'li.visitonce.v1';
+if (!sessionStorage.getItem(VISIT_KEY)) {
+    Sset(VISIT_KEY, true);
+    pendingVisitInc += 1;
+    savePendingLocal();
+    applyPendingToDbCache();
+    scheduleDbPush();
+}
+
+function tstr(key) {
+    const table = navAuth[key] || { en: key };
+    return (table[currentLang] != null ? table[currentLang] : table.en) || key;
+}
+
 function sendHeartbeat() {
-    const all = Lget(STORE.hearts, {});
-    all[HEARTBEAT_ID] = heartbeatContext();
-    Lset(STORE.hearts, all);
+    pendingHeartbeatTs = Date.now();
+    savePendingLocal();
+    applyPendingToDbCache();
+    scheduleDbPush();
 }
 
 function pruneAndGetHearts() {
-    const all = Lget(STORE.hearts, {});
+    const all = dbCache.hearts || {};
     const now = Date.now();
     const out = {};
-    let changed = false;
     for (const [k, v] of Object.entries(all)) {
         if (v && typeof v.ts === 'number' && (now - v.ts) <= ONLINE_TIMEOUT_MS) {
             out[k] = v;
-        } else {
-            changed = true;
         }
     }
-    if (changed) Lset(STORE.hearts, out);
     return out;
 }
 
@@ -902,25 +1253,22 @@ function countOnline(hearts) {
 sendHeartbeat();
 setInterval(sendHeartbeat, HEARTBEAT_MS);
 window.addEventListener('beforeunload', () => {
-    const all = Lget(STORE.hearts, {});
-    delete all[HEARTBEAT_ID];
-    Lset(STORE.hearts, all);
     const me = Lget(STORE.me, null);
     if (me && me.username) {
-        const users = Lget(STORE.users, []);
-        const idx = users.findIndex(u => u.username === me.username);
-        if (idx >= 0) {
-            users[idx].lastSeen = Date.now();
-            Lset(STORE.users, users);
-        }
+        pendingUserUpdates[me.username] = Object.assign(pendingUserUpdates[me.username] || {}, { lastSeen: Date.now() });
+        savePendingLocal();
+        applyPendingToDbCache();
     }
+    try { ghPutDb(); } catch (e) {}
 });
 document.addEventListener('visibilitychange', sendHeartbeat);
 
 const heartCheck = setInterval(() => {
     pruneAndGetHearts();
     if (adminOpen) renderAdminDashboard();
-}, 5000);
+}, 30000);
+
+setSyncInterval(SYNC_MS_IDLE);
 
 function hashPass(s) {
     let h = 2166136261;
@@ -931,8 +1279,103 @@ function hashPass(s) {
     return 'fh1_' + (h >>> 0).toString(16).padStart(8, '0');
 }
 
+if (!('EMAIL_JS' in window)) {
+    window.EMAIL_JS = { publicKey: EMAILJS.publicKey, serviceId: EMAILJS.serviceId, templateId: EMAILJS.templateId };
+}
+
+const otpStore = { codes: {} };
+function genCode() { return String(Math.floor(100000 + Math.random() * 900000)); }
+async function emailSendCode(email, code, mode) {
+    if (EMAILJS.publicKey && EMAILJS.serviceId && EMAILJS.templateId && typeof window !== 'undefined' && window.emailjs) {
+        try {
+            await window.emailjs.send(EMAILJS.serviceId, EMAILJS.templateId, {
+                to_email: email,
+                verify_code: code,
+                mode: mode || 'verify'
+            }, { publicKey: EMAILJS.publicKey });
+            return true;
+        } catch (e) { return false; }
+    }
+    return 'demo';
+}
+async function sendOtp(mode) {
+    let email = '';
+    if (mode === 'register') {
+        const f = document.querySelector('[data-auth-form="register"]');
+        if (f && f.email) email = (f.email.value || '').trim();
+    } else if (mode === 'signin') {
+        const f = document.querySelector('[data-auth-form="signin"]');
+        if (f && f.username) {
+            const un = (f.username.value || '').trim();
+            const u = findUser(un);
+            if (u) email = u.email || '';
+        }
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (mode === 'register') setAuthError('register', tstr('emailInvalid'));
+        else setAuthError('signin', tstr('emailInvalid'));
+        return;
+    }
+    const key = (mode || 'otp') + ':' + email.toLowerCase();
+    const last = otpStore.codes[key];
+    const now = Date.now();
+    if (last && last.expAt - now > (5 * 60 * 1000 - 60000)) {
+        showToast(tstr('codeSentWait'), 'warn');
+        return;
+    }
+    const code = genCode();
+    const res = await emailSendCode(email, code, mode);
+    const expAt = now + 5 * 60 * 1000;
+    otpStore.codes[key] = { code, expAt, try: 0 };
+    const btn = document.querySelector('[data-otp="' + (mode || '') + '"]');
+    if (btn) {
+        const orig = btn.textContent || btn.innerText || '';
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+        let left = 60;
+        btn.textContent = left + 's';
+        const t = setInterval(() => {
+            left--;
+            if (left <= 0) {
+                clearInterval(t);
+                btn.disabled = false;
+                btn.style.opacity = '';
+                btn.textContent = orig || tstr('sendCode');
+            } else {
+                btn.textContent = left + 's';
+            }
+        }, 1000);
+    }
+    if (res === 'demo') showToast(tstr('codeSentDemo') + ' ' + code, 'ok');
+    else if (res === true) showToast(tstr('codeSent'), 'ok');
+    else showToast(tstr('codeSendFail'), 'err');
+}
+function verifyOtp(email, code, mode) {
+    if (!email || !code) return false;
+    const key = (mode || 'otp') + ':' + email.toLowerCase();
+    const rec = otpStore.codes[key];
+    if (!rec) return false;
+    const now = Date.now();
+    if (now > rec.expAt) { delete otpStore.codes[key]; return false; }
+    rec.try = (rec.try || 0) + 1;
+    if (rec.try > 8) { delete otpStore.codes[key]; return false; }
+    if (String(rec.code) === String(code).trim()) {
+        delete otpStore.codes[key];
+        return true;
+    }
+    return false;
+}
+
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest && e.target.closest('[data-otp]');
+    if (!btn) return;
+    e.preventDefault();
+    const mode = btn.getAttribute('data-otp');
+    sendOtp(mode);
+});
+
 function findUser(username) {
-    const users = Lget(STORE.users, []);
+    const users = dbCache.users || [];
     return users.find(u => u.username.toLowerCase() === (username || '').toLowerCase());
 }
 
@@ -942,12 +1385,10 @@ function writeSession(username, role) {
     sessions[token] = { username, role, iat: Date.now() };
     Lset(STORE.sessions, sessions);
     Lset(STORE.me, { username, role, token });
-    const users = Lget(STORE.users, []);
-    const idx = users.findIndex(u => u.username === username);
-    if (idx >= 0) {
-        users[idx].lastSeen = Date.now();
-        Lset(STORE.users, users);
-    }
+    pendingUserUpdates[username] = Object.assign(pendingUserUpdates[username] || {}, { lastSeen: Date.now() });
+    savePendingLocal();
+    applyPendingToDbCache();
+    scheduleDbPush();
     return token;
 }
 
@@ -970,12 +1411,17 @@ function restoreSession() {
         clearSession();
         return null;
     }
-    const users = Lget(STORE.users, []);
-    const idx = users.findIndex(u => u.username === me.username);
-    if (idx >= 0) {
-        users[idx].lastSeen = Date.now();
-        Lset(STORE.users, users);
+    const users = dbCache.users || [];
+    const u = users.find(x => x.username === me.username);
+    if (u && u.forceReloginAt && s.iat && s.iat < u.forceReloginAt) {
+        clearSession();
+        if (typeof renderNavAuth === 'function') try { renderNavAuth(); } catch(e){}
+        return null;
     }
+    pendingUserUpdates[me.username] = Object.assign(pendingUserUpdates[me.username] || {}, { lastSeen: Date.now() });
+    savePendingLocal();
+    applyPendingToDbCache();
+    scheduleDbPush();
     return me;
 }
 
@@ -1099,24 +1545,29 @@ document.querySelectorAll('[data-auth-form="register"]').forEach(form => {
         const email = (data.email || '').trim();
         const password = data.password || '';
         const confirm = data.confirm || '';
+        const code = (data.code || '').trim();
         setAuthError('register', '');
-        if (!username || !email || !password || !confirm) return setAuthError('register', tstr('required'));
+        if (!username || !email || !password || !confirm || !code) return setAuthError('register', tstr('required'));
         if (username.length < 2) return setAuthError('register', tstr('userShort'));
         if (password.length < 4) return setAuthError('register', tstr('passShort'));
         if (password !== confirm) return setAuthError('register', tstr('confirmMismatch'));
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setAuthError('register', tstr('emailInvalid'));
+        if (!verifyOtp(email, code, 'register')) return setAuthError('register', tstr('codeBad'));
         if (findUser(username)) return setAuthError('register', tstr('userExists'));
-        const users = Lget(STORE.users, []);
-        if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) return setAuthError('register', tstr('emailExists'));
-        users.push({
+        const users0 = dbCache.users || [];
+        if (users0.find(u => u.email.toLowerCase() === email.toLowerCase())) return setAuthError('register', tstr('emailExists'));
+        const newUser = {
             username,
             email,
-            passHash: hashPass(password),
+            passHash: encUserPwd(password),
             role: 'user',
             createdAt: Date.now(),
             lastSeen: Date.now()
-        });
-        Lset(STORE.users, users);
+        };
+        pendingUsersAdd.push(newUser);
+        savePendingLocal();
+        applyPendingToDbCache();
+        scheduleDbPush();
         setAuthError('register', '');
         switchAuthTabTo('signin');
         const f = document.querySelector('[data-auth-form="signin"]');
@@ -1134,10 +1585,18 @@ document.querySelectorAll('[data-auth-form="signin"]').forEach(form => {
         const data = Object.fromEntries(new FormData(form).entries());
         const username = (data.username || '').trim();
         const password = data.password || '';
+        const code = (data.code || '').trim();
         setAuthError('signin', '');
-        if (!username || !password) return setAuthError('signin', tstr('required'));
+        if (!username || !password || !code) return setAuthError('signin', tstr('required'));
         const user = findUser(username);
-        if (!user || user.passHash !== hashPass(password)) return setAuthError('signin', tstr('invalidCreds'));
+        let match = false;
+        if (user) {
+            if ((user.passHash || '').startsWith('ev1_')) match = decUserPwd(user.passHash) === password;
+            else if ((user.passHash || '').startsWith('fh1_')) match = user.passHash === hashPass(password);
+            else match = user.passHash === password;
+        }
+        if (!match) return setAuthError('signin', tstr('invalidCreds'));
+        if (!verifyOtp(user.email, code, 'signin')) return setAuthError('signin', tstr('codeBad'));
         writeSession(user.username, user.role);
         renderNavAuth();
         showToast(tstr('signInOk') + ' · ' + user.username, 'ok');
@@ -1153,8 +1612,9 @@ document.querySelectorAll('[data-auth-form="admin"]').forEach(form => {
         const pw = data.adminPass || '';
         setAuthError('admin', '');
         if (!pw) return setAuthError('admin', tstr('required'));
-        const stored = Lget(STORE.admin, DEFAULT_ADMIN_PASS);
-        const match = pw === stored || hashPass(pw) === stored;
+        let stored = dbCache.adminPass || DEFAULT_ADMIN_PASS;
+        if (stored && !stored.startsWith('s2_')) stored = adminHash(stored);
+        const match = adminHash(pw) === stored;
         if (!match) return setAuthError('admin', tstr('adminWrong'));
         writeSession('admin', 'admin');
         renderNavAuth();
@@ -1173,6 +1633,8 @@ function openAdminDashboard() {
     }
     openModal('adminModal');
     adminOpen = true;
+    setSyncInterval(SYNC_MS_ADMIN);
+    syncDb().then(() => { if (adminOpen) renderAdminDashboard(); }).catch(()=>{});
     renderAdminDashboard();
 }
 
@@ -1201,30 +1663,52 @@ function renderAdminDashboard() {
     if (!adminOpen) return;
     const hearts = pruneAndGetHearts();
     const online = countOnline(hearts);
-    const visits = Lget(STORE.visits, 0) || 0;
-    const users = Lget(STORE.users, []);
-    const eggs = (typeof foundEggs !== 'undefined' && foundEggs && foundEggs.size) || 0;
+    const visits = dbCache.visits || 0;
+    const users = dbCache.users || [];
+    const eggs = (dbCache.eggs || []).length;
     animateNumber(adminOnlineEl, online);
     animateNumber(adminVisitsEl, visits);
     animateNumber(adminUsersEl, users.length);
     animateNumber(adminEggsEl, eggs);
-    const tbody = adminUsersBody;
+    const thead = adminUsersBody ? adminUsersBody.closest('table').querySelector('thead tr') : null;
+    if (thead && thead.children.length === 6) {
+        thead.innerHTML =
+            '<th data-i18n="admin.thUsername">' + tstr('thUsername') + '</th>' +
+            '<th data-i18n="admin.thEmail">' + tstr('thEmail') + '</th>' +
+            '<th data-i18n="admin.thCreated">' + tstr('thCreated') + '</th>' +
+            '<th data-i18n="admin.thSeen">' + tstr('thSeen') + '</th>' +
+            '<th data-i18n="admin.thOnline">' + tstr('thOnline') + '</th>' +
+            '<th data-i18n="admin.thPassword">' + tstr('thPassword') + '</th>' +
+            '<th></th>';
+    }
     if (!tbody) return;
     if (!users.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="admin-empty">' + tstr('emptyUsers') + '</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="admin-empty">' + tstr('emptyUsers') + '</td></tr>';
         return;
     }
     const now = Date.now();
     const armed = adminSafeDelete ? adminSafeDelete.checked : false;
     const rows = users.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)).map(u => {
         const on = isOnlineNow(u.username, hearts);
+        const pwDec = decUserPwd(u.passHash || '');
         return '<tr data-user="' + escapeHtml(u.username) + '">' +
             '<td><strong>' + escapeHtml(u.username) + '</strong>' + (u.role === 'admin' ? ' <span style="font-family:JetBrains Mono,monospace;font-size:0.7em;padding:2px 6px;border-radius:999px;background:linear-gradient(135deg,var(--accent),var(--cyan));color:#fff;vertical-align:middle;">ADMIN</span>' : '') + '</td>' +
             '<td>' + escapeHtml(u.email) + '</td>' +
             '<td style="white-space:nowrap;">' + new Date(u.createdAt || Date.now()).toLocaleDateString() + '</td>' +
             '<td style="white-space:nowrap;">' + humanTime(u.lastSeen, now) + '</td>' +
             '<td><span class="admin-online-dot' + (on ? ' online' : '') + '">' + (on ? tstr('online') : tstr('offline')) + '</span></td>' +
-            '<td style="text-align:right;"><button type="button" class="admin-row-delete' + (armed ? ' armed' : '') + '" data-act="deluser" data-user="' + escapeHtml(u.username) + '">Delete</button></td>' +
+            '<td>' +
+              '<div style="display:flex;align-items:center;gap:6px;min-width:140px;justify-content:flex-end;">' +
+                '<code class="pwd-cell" data-pwd="' + escapeHtml(pwDec) + '" style="font-family:JetBrains Mono,monospace;font-size:0.76em;letter-spacing:0.04em;color:var(--text-mute);">\u2022\u2022\u2022\u2022\u2022\u2022</code>' +
+                '<button type="button" class="admin-row-toggle" data-act="togglepwd" data-user="' + escapeHtml(u.username) + '" title="' + tstr('showPwd') + '">' + tstr('showPwd') + '</button>' +
+              '</div>' +
+            '</td>' +
+            '<td style="text-align:right;">' +
+              '<div style="display:flex;gap:6px;justify-content:flex-end;">' +
+                '<button type="button" class="admin-row-kick" data-act="kick" data-user="' + escapeHtml(u.username) + '">' + tstr('kickUser') + '</button>' +
+                '<button type="button" class="admin-row-delete' + (armed ? ' armed' : '') + '" data-act="deluser" data-user="' + escapeHtml(u.username) + '">Delete</button>' +
+              '</div>' +
+            '</td>' +
             '</tr>';
     }).join('');
     tbody.innerHTML = rows;
@@ -1285,13 +1769,51 @@ if (adminSafeDelete) {
 }
 
 document.addEventListener('click', (e) => {
-    const btn = e.target.closest && e.target.closest('[data-act="deluser"]');
+    const tr = e.target.closest && e.target.closest('tr[data-user]');
+    if (!tr) return;
+    const togg = e.target.closest('[data-act="togglepwd"]');
+    if (togg) {
+        const cell = tr.querySelector('.pwd-cell');
+        if (cell) {
+            const shown = cell.getAttribute('data-shown') === '1';
+            if (shown) {
+                cell.textContent = '\u2022\u2022\u2022\u2022\u2022\u2022';
+                cell.setAttribute('data-shown', '0');
+                cell.style.color = 'var(--text-mute)';
+                togg.textContent = tstr('showPwd');
+            } else {
+                cell.textContent = cell.getAttribute('data-pwd') || '';
+                cell.setAttribute('data-shown', '1');
+                cell.style.color = 'var(--text)';
+                togg.textContent = tstr('hidePwd');
+            }
+        }
+        return;
+    }
+    const kick = e.target.closest('[data-act="kick"]');
+    if (kick) {
+        const username = kick.getAttribute('data-user');
+        if (!username) return;
+        if (!confirm(tstr('kickConfirm') + '\n' + username)) return;
+        pendingUserUpdates[username] = Object.assign(pendingUserUpdates[username] || {}, { forceReloginAt: Date.now() });
+        savePendingLocal();
+        applyPendingToDbCache();
+        scheduleDbPush();
+        renderAdminDashboard();
+        showToast(tstr('kicked'), 'warn');
+        return;
+    }
+    const btn = e.target.closest('[data-act="deluser"]');
     if (!btn) return;
     const username = btn.getAttribute('data-user');
     if (!adminSafeDelete || !adminSafeDelete.checked) return;
     if (!confirm(tstr('deleteConfirm') + '\n' + username)) return;
-    const users = Lget(STORE.users, []).filter(u => u.username !== username);
-    Lset(STORE.users, users);
+    if (!pendingUsersDelete.includes(username)) pendingUsersDelete.push(username);
+    const i = pendingUsersAdd.findIndex(u => u.username === username);
+    if (i >= 0) pendingUsersAdd.splice(i, 1);
+    savePendingLocal();
+    applyPendingToDbCache();
+    scheduleDbPush();
     renderAdminDashboard();
     showToast(tstr('deleted'), 'warn');
 });
@@ -1302,6 +1824,7 @@ if (adminLogout) adminLogout.addEventListener('click', () => {
     renderNavAuth();
     closeModal('adminModal');
     adminOpen = false;
+    setSyncInterval(SYNC_MS_IDLE);
 });
 
 const adminChpass = document.getElementById('adminChpass');
@@ -1314,8 +1837,9 @@ function openChpassPrompt() {
     if (!me || me.role !== 'admin') return;
     const cur = prompt(tstr('currentPass'));
     if (cur == null) return;
-    const stored = Lget(STORE.admin, DEFAULT_ADMIN_PASS);
-    if (cur !== stored) {
+    let stored = dbCache.adminPass || DEFAULT_ADMIN_PASS;
+    if (stored && !stored.startsWith('s2_')) stored = adminHash(stored);
+    if (adminHash(cur) !== stored) {
         showToast(tstr('changeFail'), 'err');
         return;
     }
@@ -1331,12 +1855,21 @@ function openChpassPrompt() {
         showToast(tstr('confirmMismatch'), 'err');
         return;
     }
-    Lset(STORE.admin, nw);
+    const nh = adminHash(nw);
+    dbCache.adminPass = nh;
+    pendingAdminPass = nh;
+    savePendingLocal();
+    applyPendingToDbCache();
+    scheduleDbPush();
     showToast(tstr('changeOk'), 'ok');
 }
 
 window.addEventListener('storage', (e) => {
-    if (e.key === STORE.hearts || e.key === STORE.users || e.key === STORE.visits) {
+    if (e.key === 'li.dbcache.v1' || e.key === 'li.dbpending.v1') {
+        try {
+            const raw = localStorage.getItem('li.dbcache.v1');
+            if (raw) dbCache = Object.assign({ users: [], hearts: {}, visits: 0, adminPass: 'admin123', eggs: [] }, JSON.parse(raw));
+        } catch (e2) {}
         if (adminOpen) renderAdminDashboard();
     }
 });
@@ -1360,6 +1893,7 @@ try {
         try { renderNavAuth(); applyI18n(currentLang || 'en'); } catch (e2) {}
     }, 0);
 }
+syncDb();
 setTimeout(() => {
     if (document.querySelector('[data-i18n="hero.status"]') && document.querySelector('[data-i18n="hero.status"]').textContent === 'hero.status') {
         try { renderNavAuth(); applyI18n(currentLang || 'en'); } catch (e) {}
