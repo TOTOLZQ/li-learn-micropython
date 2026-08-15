@@ -10,7 +10,7 @@
     <style>.toast-wrap{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;display:flex;flex-direction:column;gap:8px;z-index:10001;pointer-events:none;}.toast{background:linear-gradient(135deg,var(--accent),var(--cyan));color:#fff;padding:10px 16px;border-radius:100px;font-family:Inter,sans-serif;font-size:0.84rem;font-weight:600;box-shadow:0 10px 28px var(--accent-glow-strong),0 4px 12px rgba(0,0,0,0.12);animation:toast-in 0.3s ease,toast-out 0.4s ease 2.3s forwards;opacity:0}.toast.toast-warn{background:linear-gradient(135deg,#f59e0b,#f472b6);}.toast.toast-err{background:linear-gradient(135deg,#ef4444,#f97316);}@keyframes toast-in{from{opacity:0;transform:translateY(14px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes toast-out{to{opacity:0;transform:translateY(-10px) scale(0.98)}}</style></head>
 <body style="">
 
-    <div class="welcome-screen hidden" id="welcomeScreen" style="display: none;">
+    <div class="welcome-screen" id="welcomeScreen">
         <canvas class="welcome-rain" id="welcomeRain" width="0" height="0"></canvas>
         <div class="hero-bg">
             <div class="grid-overlay"></div>
@@ -476,6 +476,13 @@
                             <span data-i18n="auth.password">auth.password</span>
                             <input type="password" name="password" autocomplete="current-password" required="" minlength="4">
                         </label>
+                        <label class="field field-with-act">
+                            <span data-i18n="auth.code">auth.code</span>
+                            <div class="field-row">
+                                <input type="text" name="code" inputmode="numeric" required="" maxlength="6" minlength="6" pattern="[0-9]{6}">
+                                <button type="button" class="btn btn-ghost otp-btn" data-otp="signin" data-i18n="auth.sendCode">auth.sendCode</button>
+                            </div>
+                        </label>
                         <div class="auth-hint" data-i18n="auth.hintSignin">auth.hintSignin</div>
                         <div class="auth-error" id="authSigninError" role="alert" aria-live="polite"></div>
                         <button type="submit" class="btn btn-primary auth-submit">
@@ -500,6 +507,13 @@
                         <label class="field">
                             <span data-i18n="auth.confirmPassword">auth.confirmPassword</span>
                             <input type="password" name="confirm" autocomplete="new-password" required="" minlength="4">
+                        </label>
+                        <label class="field field-with-act">
+                            <span data-i18n="auth.code">auth.code</span>
+                            <div class="field-row">
+                                <input type="text" name="code" inputmode="numeric" required="" maxlength="6" minlength="6" pattern="[0-9]{6}">
+                                <button type="button" class="btn btn-ghost otp-btn" data-otp="register" data-i18n="auth.sendCode">auth.sendCode</button>
+                            </div>
                         </label>
                         <div class="auth-error" id="authRegisterError" role="alert" aria-live="polite"></div>
                         <button type="submit" class="btn btn-primary auth-submit">
